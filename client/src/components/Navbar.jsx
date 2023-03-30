@@ -106,10 +106,11 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
+  const token = localStorage.getItem("token");
   
   const [notification, setNotification] = useState([]);
   useEffect(() => {
-    getUsers().then((res) => {
+    getUsers(token).then((res) => {
       setUsers(res.data);
     }).catch((err) => { 
       if(err.response.status === 401)
@@ -122,7 +123,7 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
   
   const getNotifications = async () => {
     try {
-      notifications().then((res) => {
+      notifications(token).then((res) => {
         setNotification(res.data);
         console.log(notification);
       });

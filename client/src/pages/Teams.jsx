@@ -245,9 +245,11 @@ const Teams = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [newProject, setNewProject] = useState(false);
   const[user,setUser]=useState(JSON.parse(localStorage.getItem('user')))
+
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getTeamDetails = async () => {
-    getTeams(id)
+    getTeams(id,token)
       .then((res) => {
         setItems(res.data);
         setProjects(res.data.projects);

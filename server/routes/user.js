@@ -13,7 +13,7 @@ import {
   getWorks,
   getTasks
 } from "../controllers/user.js";
-import { verifyToken } from "../verifyToken.js";
+import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 

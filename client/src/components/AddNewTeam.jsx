@@ -233,6 +233,7 @@ const AddNewTeam = ({ setNewTeam}) => {
   const [showAddTeam, setShowAddTeam] = useState(true);
   const [showTools, setShowTools] = useState(false);
   const [showAddMember, setShowAddMember] = useState(false);
+  const token = localStorage.getItem("token");
 
   const goToAddTeam = () => {
     setShowAddTeam(true);
@@ -262,7 +263,7 @@ const AddNewTeam = ({ setNewTeam}) => {
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
-    searchUsers(search)
+    searchUsers(search,token)
       .then((res) => {
         setUsers(res.data);
       })
@@ -294,7 +295,7 @@ const AddNewTeam = ({ setNewTeam}) => {
     let teamInvite = true;
     if (teamInvite) {
       selectedUsers.map((user) => {
-        inviteTeamMembers(id, user)
+        inviteTeamMembers(id, user,token)
           .then((res) => {
             console.log(res);
             dispatch(
@@ -310,7 +311,7 @@ const AddNewTeam = ({ setNewTeam}) => {
       });
     } else {
       selectedUsers.map((user) => {
-        inviteTeamMembers(id, user)
+        inviteTeamMembers(id, user,token)
           .then((res) => {
             console.log(res);dispatch(
               openSnackbar({
@@ -370,7 +371,7 @@ const AddNewTeam = ({ setNewTeam}) => {
       ...inputs,
       tools: tools,
     };
-    createTeam(Team)
+    createTeam(Team,token)
       .then((res) => {
         // get the id from res and invite members function call
         handleInviteAll(res.data._id);

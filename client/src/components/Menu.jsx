@@ -90,6 +90,8 @@ const TeamIcon = styled(WorkspacesRounded)`
 `;
 
 const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
+
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const logoutUser = () => {
     dispatch(logout());
@@ -100,7 +102,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
 
   const getteams = async () => {
     console.log(team);
-    getUsers()
+    getUsers(token)
       .then((res) => {
         setTeams(res.data.teams);
       })

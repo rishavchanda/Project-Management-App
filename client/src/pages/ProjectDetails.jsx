@@ -325,9 +325,10 @@ const ProjectDetails = () => {
 
   const [openWork, setOpenWork] = useState(false);
 
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getproject = async () => {
-    getProjectDetails(id)
+    getProjectDetails(id,token)
       .then((res) => {
         setItems(res.data);
         setMembers(res.data.members);
@@ -346,7 +347,7 @@ const ProjectDetails = () => {
   };
 
   const getProjectWorks = async (id) => {
-    getWorks(id)
+    getWorks(id,token)
       .then((res) => {
         setWorks(res.data);
         console.log(res.data);

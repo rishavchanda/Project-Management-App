@@ -261,9 +261,10 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
   const [selectedUsers, setSelectedUsers] = React.useState([]);
   const [inputs, setInputs] = useState({ title: "", desc: "" });
 
+  const token = localStorage.getItem("token");
   const handleSearch = async (e) => {
     setSearch(e.target.value);
-    searchUsers(search)
+    searchUsers(search,token)
       .then((res) => {
         setUsers(res.data);
       })
@@ -295,7 +296,7 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
     let teamInvite = false;
     if (teamInvite) {
       selectedUsers.map((user) => {
-        inviteTeamMembers(id, user)
+        inviteTeamMembers(id, user,token)
           .then((res) => {
             console.log(res);
             dispatch(
@@ -311,7 +312,7 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
       });
     } else {
       selectedUsers.map((user) => {
-        inviteProjectMembers(id, user)
+        inviteProjectMembers(id, user,token)
           .then((res) => {
             console.log(res);
             dispatch(
@@ -374,7 +375,7 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
       tools: tools,
     };
     if (teamProject) {
-      addTeamProject(teamId, project)
+      addTeamProject(teamId, project,token)
         .then((res) => {
           // get the id from res and invite members function call
           handleInviteAll(res.data._id);
@@ -400,7 +401,7 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
           );
         });
     } else {
-      createProject(project)
+      createProject(project,token)
         .then((res) => {
           // get the id from res and invite members function call
           handleInviteAll(res.data._id);

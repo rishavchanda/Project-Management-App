@@ -122,6 +122,7 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
   const [search, setSearch] = React.useState("");
   const [users, setUsers] = React.useState([]);
   const { currentUser } = useSelector((state) => state.user);
+  const token = localStorage.getItem("token");
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
@@ -142,7 +143,7 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
     };
     console.log(User);
     if(teamInvite){
-    inviteTeamMembers(id, User)
+    inviteTeamMembers(id, User,token)
       .then((res) => {
         console.log(res);
         dispatch(openSnackbar({ message: `Invitation sent to ${user.name}`, type: "success" }));
@@ -152,7 +153,7 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
       });
     }else{
       console.log("project");
-      inviteProjectMembers(id, User)
+      inviteProjectMembers(id, User,token)
       .then((res) => {
         console.log(res);
       })

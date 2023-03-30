@@ -44,6 +44,8 @@ function App() {
   const { open, message, severity } = useSelector((state) => state.snackbar);
   const [loading, setLoading] = useState(false);
 
+
+
   return (
     <DndProvider backend={HTML5Backend}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
@@ -65,7 +67,7 @@ function App() {
                       <Route path="projects">
                         <Route path=":id" element={<ProjectDetails />} />
                       </Route>
-                      
+
                       <Route path="works" element={<Works />} />
                       <Route path="*" element={<div>Not Found</div>} />
                     </Route>

@@ -254,6 +254,8 @@ const AddWork = ({ ProjectMembers, ProjectId, setCreated }) => {
   const [tags, setTags] = useState("");
   const [taskIndex, setTaskIndex] = useState(0);
 
+  const token = localStorage.getItem("token");
+
   //tasks
   const [task, setTask] = useState([
     {
@@ -349,7 +351,7 @@ const AddWork = ({ ProjectMembers, ProjectId, setCreated }) => {
 
     console.log(newWorkCard);
     setLoading(true);
-    addWorks(ProjectId, newWorkCard)
+    addWorks(ProjectId, newWorkCard,token)
       .then((res) => {
         setLoading(false);
         emptyForm();

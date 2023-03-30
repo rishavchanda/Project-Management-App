@@ -412,9 +412,10 @@ const ProjectDetails = () => {
 
   const [openWork, setOpenWork] = useState(false);
 
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getWorks = async () => {
-    userWorks()
+    userWorks(token)
       .then((res) => {
         setWorks(res.data);
         setLoading(false);
@@ -427,7 +428,7 @@ const ProjectDetails = () => {
   };
 
   const getTasks = async () => {
-    userTasks()
+    userTasks(token)
       .then((res) => {
         setTasks(res.data);
         setLoading(false);

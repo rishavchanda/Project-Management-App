@@ -5,6 +5,7 @@ import { createError } from "../error.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import dotenv from 'dotenv';
+import otpGenerator from 'otp-generator';
 
 
 dotenv.config();
@@ -136,7 +137,7 @@ export const googleAuthSignIn = async (req, res, next) => {
                 next(err);
             }
         }else if(user.googleSignIn){
-            const token = jwt.sign({ id: user._id }, process.env.JWT);
+            const token = jwt.sign({ id: user._id }, process.env.JWT,{ expiresIn : "24h" });
             const { password, ...others } = user._doc;
             res.cookie("access_token", token, { httpOnly: true }).status(200).json(others);
         }else{  
@@ -149,4 +150,29 @@ export const googleAuthSignIn = async (req, res, next) => {
 
 export const logout = (req, res) => {
     res.clearCookie("access_token").json({ message: "Logged out" });
+}
+
+
+export const generateOTP = async (req, res) => {
+    req.app.locals.OTP = await otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true,  });
+    return res.status(201).send({code: req.app.locals.OTP});
+}
+
+export const verifyOTP = async (req, res, next) => {
+    const {code} = req.query;
+    if(parseInt(code) === parseInt(req.app.locals.OTP)){
+        req.app.locals.OTP = null;
+        req.app.locals.resetSession = true;
+        res.status(200).send({message: "OTP verified"});
+    }
+    return next(createError(400, "Invalid OTP"));
+}
+
+export const createResetSession = async (req, res, next) => {
+    if(req.app.locals.resetSession){
+        req.app.locals.resetSession = false;
+        return res.status(200).send({message: "Access granted"});
+    }
+
+    return res.status(400).send({message: "Session expired"});
 }

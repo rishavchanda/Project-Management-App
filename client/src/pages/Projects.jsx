@@ -94,8 +94,11 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const { currentUser } = useSelector((state) => state.user);
   const [newProject,setNewProject] = useState(false);
+
+
+  const token = localStorage.getItem("token");
   const getprojects = async () => {
-    getProjects()
+    getProjects(token)
       .then((res) => {
         setData(res.data);
         setLoading(false);
@@ -115,6 +118,7 @@ const Projects = () => {
     getprojects();
     window.scrollTo(0, 0);
   }, [newProject,currentUser]);
+
 
   return (
     <Container>
