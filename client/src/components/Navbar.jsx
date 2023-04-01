@@ -134,7 +134,7 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
 
   useEffect(() => {
     getNotifications();
-  });
+  },[]);
 
   useEffect(() => {
     if (!currentUser && !SignUpOpen) {

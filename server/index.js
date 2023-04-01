@@ -28,14 +28,8 @@ const connect = () => {
     });
 };
 
-const corsOptions = {
-    origin: true, //included origin as true
-    credentials: true, //included credentials as true
-};
 
-app.use(cookieParser())
 app.use(express.json())
-app.use(cors(corsOptions))
 // app.enable('trust proxy'); // optional, not needed for secure cookies
 // app.use(express.session({
 //     secret : '123456',

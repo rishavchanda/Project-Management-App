@@ -9,6 +9,7 @@ import {
 } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useTheme } from "styled-components";
 import Google from "../Images/google.svg";
 import { IconButton, Modal } from "@mui/material";
 import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
@@ -20,6 +21,7 @@ import validator from "validator";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { googleSignIn, signUp } from "../api/index";
+import OTP from "./OTP";
 
 const Container = styled.div`
   width: 100%;
@@ -137,6 +139,8 @@ const Error = styled.div`
 `;
 
 const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
+
+  const [nameValidated, setNameValidated] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -150,20 +154,23 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
     password: "",
     showPassword: false,
   });
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+
   const dispatch = useDispatch();
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-
-    if (!disabled) {
+  const createAccount = () => {
+    if (otpVerified) {
       dispatch(loginStart());
       setDisabled(true);
       setLoading(true);
       try {
         signUp({ name, email, password }).then((res) => {
           if (res.status === 200) {
+            dispatch(loginSuccess(res.data));
             dispatch(
-              openSnackbar({ message: res.data.message, severity: "success" })
+              openSnackbar({ message: `OTP Verified & ${res.data.message}`, severity: "success" })
             );
             setLoading(false);
             setDisabled(false);
@@ -188,6 +195,15 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
         );
       }
     }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    if(!disabled )
+    {
+      setOtpSent(true);
+    }
+    
     if (name === "" || email === "" || password === "") {
       dispatch(
         openSnackbar({
@@ -213,6 +229,10 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
       setDisabled(true);
     }
   }, [name, email, passwordCorrect, password, nameCorrect]);
+
+  useEffect(() => {
+    createAccount();
+  }, [otpVerified]);
 
   //validate email
   const validateEmail = () => {
@@ -250,11 +270,17 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
   //validate name
   const validateName = () => {
     if (name.length < 4) {
+      setNameValidated (false);
       setNameCorrect(false);
       setcredentialError("Name must be atleast 4 characters long!");
     } else {
       setNameCorrect(true);
-      setcredentialError("");
+      if(!nameValidated)
+      {
+        setcredentialError("");
+        setNameValidated (true);
+      }
+      
     }
   };
 
@@ -299,93 +325,104 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
       });
   };
 
+  const theme = useTheme();
   //ssetSignInOpen(false)
   return (
     <Modal open={true} onClose={() => setSignInOpen(false)}>
       <Container>
         <Wrapper>
-          <CloseRounded
-            style={{
-              position: "absolute",
-              top: "24px",
-              right: "30px",
-              cursor: "pointer",
-            }}
-            onClick={() => setSignUpOpen(false)}
-          />
-          <Title>Sign Up</Title>
-          <OutlinedBox
-            googleButton={TroubleshootRounded}
-            style={{ margin: "24px" }}
-            onClick={handleGoogleLogin}
-          >
-            <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
-            Continue with Google
-          </OutlinedBox>
-          <Divider>
-            <Line />
-            or
-            <Line />
-          </Divider>
-          <OutlinedBox style={{ marginTop: "24px" }}>
-            <Person
-              sx={{ fontSize: "20px" }}
-              style={{ paddingRight: "12px" }}
-            />
-            <TextInput
-              placeholder="Full Name"
-              type="text"
-              onChange={(e) => setName(e.target.value)}
-            />
-          </OutlinedBox>
-          <OutlinedBox>
-            <EmailRounded
-              sx={{ fontSize: "20px" }}
-              style={{ paddingRight: "12px" }}
-            />
-            <TextInput
-              placeholder="Email Id"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </OutlinedBox>
-          <Error error={emailError}>{emailError}</Error>
-          <OutlinedBox>
-            <PasswordRounded
-              sx={{ fontSize: "20px" }}
-              style={{ paddingRight: "12px" }}
-            />
-            <TextInput
-              type={values.showPassword ? "text" : "password"}
-              placeholder="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <IconButton
-              color="inherit"
-              onClick={() =>
-                setValues({ ...values, showPassword: !values.showPassword })
-              }
-            >
-              {values.showPassword ? (
-                <Visibility sx={{ fontSize: "20px" }} />
-              ) : (
-                <VisibilityOff sx={{ fontSize: "20px" }} />
-              )}
-            </IconButton>
-          </OutlinedBox>
-          <Error error={credentialError}>{credentialError}</Error>
-          <OutlinedBox
-            button={true}
-            activeButton={!disabled}
-            style={{ marginTop: "6px" }}
-            onClick={handleSignUp}
-          >
-            {Loading ? (
-              <CircularProgress color="inherit" size={20} />
-            ) : (
-              "Create Account"
-            )}
-          </OutlinedBox>
+              <CloseRounded
+                style={{
+                  position: "absolute",
+                  top: "24px",
+                  right: "30px",
+                  cursor: "pointer",
+                }}
+                onClick={() => setSignUpOpen(false)}
+              />
+          {!otpSent ?
+            <>
+              <Title>Sign Up</Title>
+              <OutlinedBox
+                googleButton={TroubleshootRounded}
+                style={{ margin: "24px" }}
+                onClick={handleGoogleLogin}
+              >
+                <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
+                Continue with Google
+              </OutlinedBox>
+              <Divider>
+                <Line />
+                or
+                <Line />
+              </Divider>
+              <OutlinedBox style={{ marginTop: "24px" }}>
+                <Person
+                  sx={{ fontSize: "20px" }}
+                  style={{ paddingRight: "12px" }}
+                />
+                <TextInput
+                  placeholder="Full Name"
+                  type="text"
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </OutlinedBox>
+              <OutlinedBox>
+                <EmailRounded
+                  sx={{ fontSize: "20px" }}
+                  style={{ paddingRight: "12px" }}
+                />
+                <TextInput
+                  placeholder="Email Id"
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </OutlinedBox>
+              <Error error={emailError}>{emailError}</Error>
+              <OutlinedBox>
+                <PasswordRounded
+                  sx={{ fontSize: "20px" }}
+                  style={{ paddingRight: "12px" }}
+                />
+                <TextInput
+                  type={values.showPassword ? "text" : "password"}
+                  placeholder="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <IconButton
+                  color="inherit"
+                  onClick={() =>
+                    setValues({ ...values, showPassword: !values.showPassword })
+                  }
+                >
+                  {values.showPassword ? (
+                    <Visibility sx={{ fontSize: "20px" }} />
+                  ) : (
+                    <VisibilityOff sx={{ fontSize: "20px" }} />
+                  )}
+                </IconButton>
+              </OutlinedBox>
+              <Error error={credentialError}>{credentialError}</Error>
+              <OutlinedBox
+                button={true}
+                activeButton={!disabled}
+                style={{ marginTop: "6px" }}
+                onClick={handleSignUp}
+              >
+                {Loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : (
+                  "Create Account"
+                )}
+              </OutlinedBox>
+
+
+
+            </>
+
+            :
+            <OTP email={email} otpVerified={otpVerified} setOtpVerified={setOtpVerified}/>
+          }
           <LoginText>
             Already have an account ?
             <Span

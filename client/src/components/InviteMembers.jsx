@@ -126,7 +126,7 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
-    searchUsers(search)
+    searchUsers(search,token)
       .then((res) => {
         setUsers(res.data);
       })

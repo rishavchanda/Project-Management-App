@@ -326,6 +326,7 @@ const ProjectDetails = () => {
   const [openWork, setOpenWork] = useState(false);
 
   const token = localStorage.getItem("token");
+  console.log(token)
   const dispatch = useDispatch();
   const getproject = async () => {
     getProjectDetails(id,token)

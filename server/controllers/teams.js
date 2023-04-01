@@ -10,13 +10,12 @@ import Project from "../models/Project.js";
 
 
 export const addTeam = async (req, res, next) => {
-    const user = await User.findOne({ id: req.user.id });
+    
+  const user = await User.findById(req.user.id);;
     if (!user) {
         return next(createError(404, "User not found"));
     }
-    if (!user.verified) {
-        return res.status(200).json({ message: "Verify your Account." });
-    }
+    
     const newTeams = new Teams({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
     try {
         const saveTeams = (await newTeams.save())
@@ -115,13 +114,12 @@ export const updateTeam = async (req, res, next) => {
 
 
 export const addTeamProject = async (req, res, next) => {
-    const user = await User.findOne({ id: req.user.id });
+    
+  const user = await User.findById(req.user.id);;
     if (!user) {
         return next(createError(404, "User not found"));
     }
-    if (!user.verified) {
-        return res.status(200).json({ message: "Verify your Account." });
-    }
+    
     const newProject = new Project({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
     try {
         const saveProject = await (await newProject.save());
@@ -157,13 +155,12 @@ const transporter = nodemailer.createTransport({
 
 export const inviteTeamMember = async (req, res, next) => {
     //send mail using nodemailer
-    const user = await User.findOne({ id: req.user.id })
+    
+  const user = await User.findById(req.user.id);
     if (!user) {
         return next(createError(404, "User not found"));
     }
-    if (!user.verified) {
-        return res.status(200).json({ message: "Verify your Account." });
-    }
+    
     const team = await Teams.findById(req.params.id);
     if (!team) return next(createError(404, "Team not found!"));
     for (let i = 0; i < team.members.length; i++) {
@@ -199,9 +196,6 @@ export const verifyInvitationTeam = async (req, res, next) => {
         const user = await User.findById(req.params.userId);
         if (!user) {
             return next(createError(404, "User not found"));
-        }
-        if (!user.verified) {
-            return res.status(200).json({ message: "Verify your Account." });
         }
         for (let i = 0; i < team.members.length; i++) {
             if (team.members[i].id === user.id) {

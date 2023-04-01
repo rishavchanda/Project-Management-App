@@ -20,11 +20,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "",
     },
-    verified: {
-        type: Boolean,
-        required: true,
-        default: false,
-    },
     googleSignIn:{
         type: Boolean,
         required: true,

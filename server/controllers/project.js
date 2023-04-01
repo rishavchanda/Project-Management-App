@@ -12,12 +12,9 @@ import Notifications from "../models/Notifications.js";
 
 
 export const addProject = async (req, res, next) => {
-  const user = await User.findOne({ id: req.user.id });
+  const user = await User.findById(req.user.id);
   if (!user) {
     return next(createError(404, "User not found"));
-  }
-  if (!user.verified) {
-    return res.status(200).json({ message: "Verify your Account." });
   }
   const newProject = new Project({ members: [{ id: user.id, img: user.img, email: user.email, name: user.name, role: "d", access: "Owner" }], ...req.body });
   try {
@@ -126,12 +123,9 @@ const transporter = nodemailer.createTransport({
 
 export const inviteProjectMember = async (req, res, next) => {
   //send mail using nodemailer
-  const user = await User.findOne({ id: req.user.id });
+  const user = await User.findById(req.user.id);
   if (!user) {
     return next(createError(404, "User not found"));
-  }
-  if (!user.verified) {
-    return res.status(200).json({ message: "Verify your Account." });
   }
   const project = await Project.findById(req.params.id);
   if (!project) return next(createError(404, "Project not found!"));
@@ -168,9 +162,7 @@ export const verifyInvitation = async (req, res, next) => {
     if (!user) {
       return next(createError(404, "User not found"));
     }
-    if (!user.verified) {
-      return res.status(200).json({ message: "Verify your Account." });
-    }
+    
     for (let i = 0; i < project.members.length; i++) {
       if (project.members[i].id === user.id) {
         return next(createError(403, "You are already a member of this project!"));
@@ -209,8 +201,7 @@ export const getProjectMembers = async (req, res, next) => {
 //add works to project
 export const addWork = async (req, res, next) => {
   try {
-
-    const user = await User.findOne({ id: req.user.id });
+    const user = await User.findById(req.user.id);
     const project = await Project.findById(req.params.id);
     if (!project) return next(createError(404, "Project not found!"));
     for (let i = 0; i < project.members.length; i++) {

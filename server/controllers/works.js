@@ -9,13 +9,11 @@ import Works from "../models/Works.js";
 
 
 export const addWork = async (req, res, next) => {
-  const user = await User.findOne({ id: req.user.id });
+  const user = await User.findById(req.user.id);
   if (!user) {
     return next(createError(404, "User not found"));
   }
-  if (!user.verified) {
-    return res.status(200).json({ message: "Verify your Account." });
-  }
+  
   const newWork = new Project({ members: [{ id: user.id, role: "d", access: "Owner" }], ...req.body });
   try {
     const saveProject = await (await newWork.save());
@@ -130,13 +128,11 @@ const transporter = nodemailer.createTransport({
 
 export const inviteProjectMember = async (req, res, next) => {
   //send mail using nodemailer
-  const user = await User.findOne({ id: req.user.id });
+  const user = await User.findById(req.user.id);
   if (!user) {
     return next(createError(404, "User not found"));
   }
-  if (!user.verified) {
-    return res.status(200).json({ message: "Verify your Account." });
-  }
+  
   const project = await Project.findById(req.params.id);
   if (!project) return next(createError(404, "Project not found!"));
   for (let i = 0; i < project.members.length; i++) {
@@ -171,9 +167,6 @@ export const verifyInvitation = async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     if (!user) {
       return next(createError(404, "User not found"));
-    }
-    if (!user.verified) {
-      return res.status(200).json({ message: "Verify your Account." });
     }
     for (let i = 0; i < project.members.length; i++) {
       if (project.members[i].id === user.id) {

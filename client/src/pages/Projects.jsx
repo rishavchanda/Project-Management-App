@@ -97,6 +97,7 @@ const Projects = () => {
 
 
   const token = localStorage.getItem("token");
+  console.log(token)
   const getprojects = async () => {
     getProjects(token)
       .then((res) => {

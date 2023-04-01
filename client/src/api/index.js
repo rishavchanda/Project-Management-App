@@ -17,7 +17,7 @@ export const signUp = async ({
     name,
     email,
     password,
-},{ withCredentials: true });
+});
 export const googleSignIn = async ({
     name,
     email,
@@ -27,6 +27,9 @@ export const googleSignIn = async ({
     email,
     password,
 },{ withCredentials: true });
+
+export const generateOtp = async () => await API.get('/auth/generateotp');
+export const verifyOtp = async (otp) => await API.get(`/auth/verifyotp?code=${otp}`);
 
 //user api
 export const getUsers = async (token) => await API.get('/users/find', { headers: { "Authorization" : `Bearer ${token}` }},{

@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com'
 });
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     const { email } = req.body
     // Check we have an email
     if (!email) {
@@ -38,22 +38,28 @@ export const signup = async (req, res) => {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(req.body.password, salt);
         const newUser = new User({ ...req.body, password: hashedPassword });
-        // Step 2 - Generate a verification token with the user's ID
-        const verificationToken = newUser.generateVerificationToken();
-        // Step 3 - Email the user a unique verification link
-        const url = `http://localhost:8800/api/auth/verify/${verificationToken}`
-        transporter.sendMail({
-            to: email,
-            subject: 'Verify Account',
-            html: `Click <a href = '${url}'>here</a>  to confirm your email.`
-        }, (err) => {
-            if (err) {
-                next(err)
-            } else {
-                newUser.save();
-                res.status(200).json({ message: `Sent a verification email to ${email}` });
-            }
-        })
+        
+        newUser.save().then((user) => {
+            res.status(200).json({user});
+        }).catch((err) => {
+            next(err);
+        });
+        // // Step 2 - Generate a verification token with the user's ID
+        // const verificationToken = newUser.generateVerificationToken();
+        // // Step 3 - Email the user a unique verification link
+        // const url = `http://localhost:8800/api/auth/verify/${verificationToken}`
+        // transporter.sendMail({
+        //     to: email,
+        //     subject: 'Verify Account',
+        //     html: `Click <a href = '${url}'>here</a>  to confirm your email.`
+        // }, (err) => {
+        //     if (err) {
+        //         next(err)
+        //     } else {
+        //         newUser.save();
+        //         res.status(200).json({ message: `Sent a verification email to ${email}` });
+        //     }
+        // })
     } catch (err) {
         next(err);
     }
@@ -71,10 +77,6 @@ export const signin = async (req, res, next) => {
         const validPassword = await bcrypt.compareSync(req.body.password, user.password);
         if (!validPassword) {
             return next(createError(201, "Wrong password"));
-        }
-        // Step 2 - Ensure the account has been verified
-        if (!user.verified) {
-            return res.status(203).json({ message: "Verify Account :-  Open your mail and verify account to login" });
         }
 
         // create jwt token
@@ -155,7 +157,7 @@ export const logout = (req, res) => {
 
 export const generateOTP = async (req, res) => {
     req.app.locals.OTP = await otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true,  });
-    return res.status(201).send({code: req.app.locals.OTP});
+    return res.status(200).send({code: req.app.locals.OTP});
 }
 
 export const verifyOTP = async (req, res, next) => {
@@ -165,7 +167,7 @@ export const verifyOTP = async (req, res, next) => {
         req.app.locals.resetSession = true;
         res.status(200).send({message: "OTP verified"});
     }
-    return next(createError(400, "Invalid OTP"));
+    return next(createError(201, "Wrong OTP"));
 }
 
 export const createResetSession = async (req, res, next) => {
