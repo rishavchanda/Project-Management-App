@@ -4,7 +4,8 @@ import jwt_decode from 'jwt-decode';
 //http://localhost:8800/api/
 //https://dull-blue-dolphin-tutu.cyclic.app
 //https://project-management-app-production-3d51.up.railway.app/
-const API = axios.create({ baseURL: 'http://localhost:8700/api/' });
+//http://localhost:8700/api/
+const API = axios.create({ baseURL: 'https://project-management-app-production-3d51.up.railway.app/api/' });
 
 
 
