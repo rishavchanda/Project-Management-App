@@ -5,7 +5,7 @@ import jwt_decode from 'jwt-decode';
 //https://dull-blue-dolphin-tutu.cyclic.app
 //https://project-management-app-production-3d51.up.railway.app/
 //http://localhost:8700/api/
-const API = axios.create({ baseURL: 'https://project-management-app-production-3d51.up.railway.app/api/' });
+const API = axios.create({ baseURL: 'http://localhost:8700/api/' });
 
 
 
@@ -23,11 +23,11 @@ export const signUp = async ({
 export const googleSignIn = async ({
     name,
     email,
-    password,
+    img,
 }) => await API.post('/auth/google', {
     name,
     email,
-    password,
+    img,
 },{ withCredentials: true });
 export const findUserByEmail = async (email) => await API.get(`/auth/findbyemail?email=${email}`);
 export const generateOtp = async (email,name,reason) => await API.get(`/auth/generateotp?email=${email}&name=${name}&reason=${reason}`);

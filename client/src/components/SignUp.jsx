@@ -18,10 +18,9 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import validator from "validator";
-import { auth, provider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
 import { googleSignIn, signUp } from "../api/index";
 import OTP from "./OTP";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Container = styled.div`
   width: 100%;
@@ -199,11 +198,10 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if(!disabled )
-    {
+    if (!disabled) {
       setOtpSent(true);
     }
-    
+
     if (name === "" || email === "" || password === "") {
       dispatch(
         openSnackbar({
@@ -270,51 +268,26 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
   //validate name
   const validateName = () => {
     if (name.length < 4) {
-      setNameValidated (false);
+      setNameValidated(false);
       setNameCorrect(false);
       setcredentialError("Name must be atleast 4 characters long!");
     } else {
       setNameCorrect(true);
-      if(!nameValidated)
-      {
+      if (!nameValidated) {
         setcredentialError("");
-        setNameValidated (true);
+        setNameValidated(true);
       }
-      
+
     }
   };
 
   //Google SignIn
-  const handleGoogleLogin = async () => {
-    dispatch(loginStart());
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        googleSignIn({
-          name: result.user.displayName,
-          email: result.user.email,
-          img: result.user.photoURL,
-        }).then((res) => {
-          if (res.status === 200) {
-            dispatch(loginSuccess(res.data));
-            setSignUpOpen(false);
-            dispatch(
-              openSnackbar({
-                message: "Account Created Successfully",
-                severity: "success",
-              })
-            );
-          } else {
-            dispatch(loginFailure());
-            dispatch(
-              openSnackbar({
-                message: res.data.message,
-                severity: "error",
-              })
-            );
-          }
-        });
-      })
-      .catch((err) => {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const user = await axios.get(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } },
+      ).catch((err) => {
         dispatch(loginFailure());
         dispatch(
           openSnackbar({
@@ -323,7 +296,44 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
           })
         );
       });
-  };
+
+      googleSignIn({
+        name: user.data.name,
+        email: user.data.email,
+        img: user.data.picture,
+      }).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          dispatch(loginSuccess(res.data));
+          setSignUpOpen(false);
+          dispatch(
+            openSnackbar({
+              message: "Logged In Successfully",
+              severity: "success",
+            })
+          );
+        } else {
+          dispatch(loginFailure(res.data));
+          dispatch(
+            openSnackbar({
+              message: res.data.message,
+              severity: "error",
+            })
+          );
+        }
+      });
+    },
+    onError: errorResponse => {
+      dispatch(loginFailure());
+      dispatch(
+        openSnackbar({
+          message: errorResponse.error,
+          severity: "error",
+        })
+      );
+    },
+  });
+
 
   const theme = useTheme();
   //ssetSignInOpen(false)
@@ -331,22 +341,22 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
     <Modal open={true} onClose={() => setSignInOpen(false)}>
       <Container>
         <Wrapper>
-              <CloseRounded
-                style={{
-                  position: "absolute",
-                  top: "24px",
-                  right: "30px",
-                  cursor: "pointer",
-                }}
-                onClick={() => setSignUpOpen(false)}
-              />
+          <CloseRounded
+            style={{
+              position: "absolute",
+              top: "24px",
+              right: "30px",
+              cursor: "pointer",
+            }}
+            onClick={() => setSignUpOpen(false)}
+          />
           {!otpSent ?
             <>
               <Title>Sign Up</Title>
               <OutlinedBox
                 googleButton={TroubleshootRounded}
                 style={{ margin: "24px" }}
-                onClick={handleGoogleLogin}
+                onClick={() => googleLogin()}
               >
                 <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
                 Continue with Google
@@ -421,7 +431,7 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
             </>
 
             :
-            <OTP email={email} name={name} otpVerified={otpVerified} setOtpVerified={setOtpVerified}/>
+            <OTP email={email} name={name} otpVerified={otpVerified} setOtpVerified={setOtpVerified} />
           }
           <LoginText>
             Already have an account ?

@@ -13,7 +13,11 @@ dotenv.config();
 
 /** Middlewares */
 app.use(express.json());
-app.use(cors());
+const corsConfig = {
+    credentials: true,
+    origin: true,
+};
+app.use(cors(corsConfig));
 app.use(morgan('tiny'));
 app.disable('x-powered-by');
 

@@ -15,10 +15,10 @@ import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
 import { openSnackbar } from "../redux/snackbarSlice";
 import { useDispatch } from "react-redux";
 import validator from "validator";
-import { auth, provider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
 import { signIn, googleSignIn, findUserByEmail, resetPassword } from "../api/index";
 import OTP from "./OTP";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const Container = styled.div`
   width: 100%;
@@ -249,47 +249,7 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
     }
   };
 
-  //Google SignIn
-  const handleGoogleLogin = async () => {
-    dispatch(loginStart());
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        googleSignIn({
-          name: result.user.displayName,
-          email: result.user.email,
-          img: result.user.photoURL,
-        }).then((res) => {
-          if (res.status === 200) {
-            dispatch(loginSuccess(res.data));
-            setSignInOpen(false);
-            dispatch(
-              openSnackbar({
-                message: "Logged In Successfully",
-                severity: "success",
-              })
-            );
-          } else {
-            dispatch(loginFailure(res.data));
-            dispatch(
-              openSnackbar({
-                message: res.data.message,
-                severity: "error",
-              })
-            );
-          }
-        });
-      })
-      .catch((err) => {
-        dispatch(loginFailure());
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
-      });
-  };
-
+  
   //validate password
   const validatePassword = () => {
     if (newpassword.length < 8) {
@@ -397,7 +357,61 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
     performResetPassword();
   }, [otpVerified]);
 
-  // setSignUpOpen(false)
+
+  //Google SignIn
+const googleLogin = useGoogleLogin({
+  onSuccess: async (tokenResponse) => {
+    const user = await axios.get(
+      'https://www.googleapis.com/oauth2/v3/userinfo',
+      { headers: { Authorization: `Bearer ${tokenResponse.access_token}`} },
+    ).catch((err) => {
+      dispatch(loginFailure());
+      dispatch(
+        openSnackbar({
+          message: err.message,
+          severity: "error",
+        })
+      );
+    });
+
+    googleSignIn({
+      name: user.data.name,
+      email: user.data.email,
+      img: user.data.picture,
+    }).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        dispatch(loginSuccess(res.data));
+        setSignInOpen(false);
+        dispatch(
+          openSnackbar({
+            message: "Logged In Successfully",
+            severity: "success",
+          })
+        );
+      } else {
+        dispatch(loginFailure(res.data));
+        dispatch(
+          openSnackbar({
+            message: res.data.message,
+            severity: "error",
+          })
+        );
+      }
+    });
+  },
+  onError: errorResponse => {
+    dispatch(loginFailure());
+    dispatch(
+      openSnackbar({
+        message: errorResponse.error,
+        severity: "error",
+      })
+    );
+  },
+});
+
+
   return (
     <Modal open={true} onClose={() => setSignInOpen(false)}>
       <Container>
@@ -417,7 +431,7 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
               <OutlinedBox
                 googleButton={TroubleshootRounded}
                 style={{ margin: "24px" }}
-                onClick={handleGoogleLogin}
+                onClick={() => googleLogin()}
               >
                 <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
                 Sign In with Google

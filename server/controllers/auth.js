@@ -80,19 +80,20 @@ export const signin = async (req, res, next) => {
 export const googleAuthSignIn = async (req, res, next) => {
     try {
         const user = await User.findOne({ email: req.body.email });
+
         if (!user) {
             try {
-                const newUser = new User({ ...req.body, verified: true, googleSignIn: true });
-                await newUser.save();
-                res.status(200).json(newUser);
+                const user = new User({ ...req.body, googleSignIn: true });
+                await user.save();
+                const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
+                res.status(200).json({ token, user: user });
             } catch (err) {
                 next(err);
             }
         } else if (user.googleSignIn) {
             const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
-            const { password, ...others } = user._doc;
-            res.cookie("access_token", token, { httpOnly: true }).status(200).json(others);
-        } else {
+            res.status(200).json({ token, user });
+        } else if (user.googleSignIn === false) {
             return next(createError(201, "User already exists with this email can't do google auth"));
         }
     } catch (err) {
@@ -233,7 +234,7 @@ export const findUserByEmail = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
 
-    if(!req.app.locals.resetSession) return res.status(440).send({ message: "Session expired" });
+    if (!req.app.locals.resetSession) return res.status(440).send({ message: "Session expired" });
 
     const { email, password } = req.body;
     try {
