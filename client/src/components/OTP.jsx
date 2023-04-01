@@ -5,8 +5,7 @@ import OtpInput from 'react-otp-input';
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch } from 'react-redux';
 import { openSnackbar } from "../redux/snackbarSlice";
-import { generateOtp,verifyOtp } from '../api';
-import { async } from '@firebase/util';
+import { generateOtp, verifyOtp } from '../api';
 
 
 const Title = styled.div`
@@ -90,7 +89,7 @@ const Resend = styled.div`
 `;
 
 
-const OTP = ({ email,otpVerified,setOtpVerified }) => {
+const OTP = ({ email, name, otpVerified, setOtpVerified, reason }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
 
@@ -165,7 +164,7 @@ const OTP = ({ email,otpVerified,setOtpVerified }) => {
     }
 
     const sendOtp = async () => {
-        await generateOtp().then((res) => {
+        await generateOtp(email, name, reason).then((res) => {
             if (res.status === 200) {
                 dispatch(
                     openSnackbar({
@@ -179,7 +178,7 @@ const OTP = ({ email,otpVerified,setOtpVerified }) => {
                 setOtpLoading(false);
                 setOtpSent(true);
                 console.log(res.data);
-            }else{
+            } else {
                 dispatch(
                     openSnackbar({
                         message: res.status,
@@ -210,7 +209,7 @@ const OTP = ({ email,otpVerified,setOtpVerified }) => {
                 setOtpError('');
                 setDisabled(false);
                 setOtpLoading(false);
-            }else {
+            } else {
                 setOtpError(res.data.message);
                 setDisabled(false);
                 setOtpLoading(false);
@@ -258,35 +257,41 @@ const OTP = ({ email,otpVerified,setOtpVerified }) => {
             <Title>VERIFY OTP</Title>
             <LoginText >A verification <b>&nbsp;OTP &nbsp;</b> has been sent to: </LoginText>
             <Span>{email}</Span>
-            <OtpInput
-                value={otp}
-                onChange={setOtp}
-                numInputs={6}
-                shouldAutoFocus={true}
-                inputStyle={{ fontSize: "22px", width: "38px", height: "38px", borderRadius: "5px", border: "1px solid #ccc", textAlign: "center", margin: "6px 4px", backgroundColor: 'transparent', color: theme.text }}
-                containerStyle={{ padding: '8px 2px', justifyContent: 'center' }}
-                renderInput={(props) => <input {...props} />}
-            />
-            <Error error={otpError}><b>{otpError}</b></Error>
-
-
-            <OutlinedBox
-                button={true}
-                activeButton={!disabled}
-                style={{ marginTop: "12px", marginBottom: "12px" }}
-                onClick={() => validateOtp()}
-            >
-                {otpLoading ? (
-                    <CircularProgress color="inherit" size={20} />
-                ) : (
-                    "Submit"
-                )}
-            </OutlinedBox>
-
-            {showTimer ?
-                <Timer>Resend in <b>{timer}</b></Timer>
+            {!otpSent ?
+                <div style={{padding: '12px 26px', marginBottom: '20px', textAlign: 'center', display: 'flex',flexDirection: 'column',alignItems: 'center',gap: '14px',justifyContent:'center'}}>Sending OTP<CircularProgress color="inherit" size={20} /></div>
                 :
-                <Resend onClick={() => resendOtp()}><b>Resend</b></Resend>
+                <div>
+                    <OtpInput
+                        value={otp}
+                        onChange={setOtp}
+                        numInputs={6}
+                        shouldAutoFocus={true}
+                        inputStyle={{ fontSize: "22px", width: "38px", height: "38px", borderRadius: "5px", border: "1px solid #ccc", textAlign: "center", margin: "6px 4px", backgroundColor: 'transparent', color: theme.text }}
+                        containerStyle={{ padding: '8px 2px', justifyContent: 'center' }}
+                        renderInput={(props) => <input {...props} />}
+                    />
+                    <Error error={otpError}><b>{otpError}</b></Error>
+
+
+                    <OutlinedBox
+                        button={true}
+                        activeButton={!disabled}
+                        style={{ marginTop: "12px", marginBottom: "12px" }}
+                        onClick={() => validateOtp()}
+                    >
+                        {otpLoading ? (
+                            <CircularProgress color="inherit" size={20} />
+                        ) : (
+                            "Submit"
+                        )}
+                    </OutlinedBox>
+
+                    {showTimer ?
+                        <Timer>Resend in <b>{timer}</b></Timer>
+                        :
+                        <Resend onClick={() => resendOtp()}><b>Resend</b></Resend>
+                    }
+                </div>
             }
         </div>
     )

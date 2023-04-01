@@ -3,6 +3,7 @@ import jwt_decode from 'jwt-decode';
 //https://vexa-server.herokuapp.com/api
 //http://localhost:8800/api/
 //https://dull-blue-dolphin-tutu.cyclic.app
+//https://project-management-app-production-3d51.up.railway.app/
 const API = axios.create({ baseURL: 'http://localhost:8700/api/' });
 
 
@@ -27,9 +28,10 @@ export const googleSignIn = async ({
     email,
     password,
 },{ withCredentials: true });
-
-export const generateOtp = async () => await API.get('/auth/generateotp');
+export const findUserByEmail = async (email) => await API.get(`/auth/findbyemail?email=${email}`);
+export const generateOtp = async (email,name,reason) => await API.get(`/auth/generateotp?email=${email}&name=${name}&reason=${reason}`);
 export const verifyOtp = async (otp) => await API.get(`/auth/verifyotp?code=${otp}`);
+export const resetPassword = async (email,password) => await API.put(`/auth/forgetpassword`,{email,password});
 
 //user api
 export const getUsers = async (token) => await API.get('/users/find', { headers: { "Authorization" : `Bearer ${token}` }},{

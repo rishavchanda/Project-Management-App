@@ -170,12 +170,12 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
           if (res.status === 200) {
             dispatch(loginSuccess(res.data));
             dispatch(
-              openSnackbar({ message: `OTP Verified & ${res.data.message}`, severity: "success" })
+              openSnackbar({ message: `OTP verified & Account created successfully`, severity: "success" })
             );
             setLoading(false);
             setDisabled(false);
             setSignUpOpen(false);
-            setSignInOpen(true);
+            setSignInOpen(false);
           } else {
             dispatch(loginFailure());
             setcredentialError(`${res.data.message}`);
@@ -421,7 +421,7 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
             </>
 
             :
-            <OTP email={email} otpVerified={otpVerified} setOtpVerified={setOtpVerified}/>
+            <OTP email={email} name={name} otpVerified={otpVerified} setOtpVerified={setOtpVerified}/>
           }
           <LoginText>
             Already have an account ?

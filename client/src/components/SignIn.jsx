@@ -17,7 +17,8 @@ import { useDispatch } from "react-redux";
 import validator from "validator";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { signIn,googleSignIn } from "../api/index";
+import { signIn, googleSignIn, findUserByEmail, resetPassword } from "../api/index";
+import OTP from "./OTP";
 
 const Container = styled.div`
   width: 100%;
@@ -134,6 +135,18 @@ const Error = styled.div`
     `}
 `;
 
+const ForgetPassword = styled.div`
+  color: ${({ theme }) => theme.soft2};
+  font-size: 13px;
+  margin: 8px 26px;
+  display: block;
+  cursor: pointer;
+  &:hover {
+    color: ${({ theme }) => theme.primary};
+  }
+
+  `;
+
 const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -143,6 +156,18 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
     password: "",
     showPassword: false,
   });
+
+  //verify otp
+  const [showOTP, setShowOTP] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  //reset password
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [samepassword, setSamepassword] = useState("");
+  const [newpassword, setNewpassword] = useState("");
+  const [confirmedpassword, setConfirmedpassword] = useState("");
+  const [passwordCorrect, setPasswordCorrect] = useState(false);
+  const [resetDisabled, setResetDisabled] = useState(true);
+  const [resettingPassword, setResettingPassword] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -234,25 +259,25 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
           email: result.user.email,
           img: result.user.photoURL,
         }).then((res) => {
-            if (res.status === 200) {
-              dispatch(loginSuccess(res.data));
-              setSignInOpen(false);
-              dispatch(
-                openSnackbar({
-                  message: "Logged In Successfully",
-                  severity: "success",
-                })
-              );
-            } else {
-              dispatch(loginFailure(res.data));
-              dispatch(
-                openSnackbar({
-                  message: res.data.message,
-                  severity: "error",
-                })
-              );
-            }
-          });
+          if (res.status === 200) {
+            dispatch(loginSuccess(res.data));
+            setSignInOpen(false);
+            dispatch(
+              openSnackbar({
+                message: "Logged In Successfully",
+                severity: "success",
+              })
+            );
+          } else {
+            dispatch(loginFailure(res.data));
+            dispatch(
+              openSnackbar({
+                message: res.data.message,
+                severity: "error",
+              })
+            );
+          }
+        });
       })
       .catch((err) => {
         dispatch(loginFailure());
@@ -265,99 +290,315 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
       });
   };
 
+  //validate password
+  const validatePassword = () => {
+    if (newpassword.length < 8) {
+      setSamepassword("Password must be atleast 8 characters long!");
+      setPasswordCorrect(false);
+    } else if (newpassword.length > 16) {
+      setSamepassword("Password must be less than 16 characters long!");
+      setPasswordCorrect(false);
+    } else if (
+      !newpassword.match(/[a-z]/g) ||
+      !newpassword.match(/[A-Z]/g) ||
+      !newpassword.match(/[0-9]/g) ||
+      !newpassword.match(/[^a-zA-Z\d]/g)
+    ) {
+      setPasswordCorrect(false);
+      setSamepassword(
+        "Password must contain atleast one lowercase, uppercase, number and special character!"
+      );
+    }
+    else {
+      setSamepassword("");
+      setPasswordCorrect(true);
+    }
+  };
+
+  useEffect(() => {
+    if (newpassword !== "") validatePassword();
+    if (
+      passwordCorrect
+      && newpassword === confirmedpassword
+    ) {
+      setSamepassword("");
+      setResetDisabled(false);
+    } else if (confirmedpassword !== "" && passwordCorrect) {
+      setSamepassword("Passwords do not match!");
+      setResetDisabled(true);
+    }
+  }, [newpassword, confirmedpassword]);
+
+  const sendOtp = () => {
+    if (!resetDisabled) {
+      setResetDisabled(true);
+      setLoading(true);
+      findUserByEmail(email).then((res) => {
+        if (res.status === 200) {
+          setShowOTP(true);
+          setResetDisabled(false);
+          setLoading(false);
+        }
+        else if (res.status === 202) {
+          setEmailError("User not found!")
+          setResetDisabled(false);
+          setLoading(false);
+        }
+      }).catch((err) => {
+        setResetDisabled(false);
+        setLoading(false);
+        dispatch(
+          openSnackbar({
+            message: err.message,
+            severity: "error",
+          })
+        );
+      });
+    }
+  }
+
+  const performResetPassword = async () => {
+    if (otpVerified) {
+      setShowOTP(false);
+      setResettingPassword(true);
+      await resetPassword(email, confirmedpassword).then((res) => {
+        if (res.status === 200) {
+          dispatch(
+            openSnackbar({
+              message: "Password Reset Successfully",
+              severity: "success",
+            })
+          );
+          setShowForgotPassword(false);
+          setEmail("");
+          setNewpassword("");
+          setConfirmedpassword("");
+          setOtpVerified(false);
+          setResettingPassword(false);
+        }
+      }).catch((err) => {
+        dispatch(
+          openSnackbar({
+            message: err.message,
+            severity: "error",
+          })
+        );
+        setShowOTP(false);
+        setOtpVerified(false);
+        setResettingPassword(false);
+      });
+    }
+  }
+  const closeForgetPassword = () => {
+    setShowForgotPassword(false)
+    setShowOTP(false)
+  }
+  useEffect(() => {
+    performResetPassword();
+  }, [otpVerified]);
+
   // setSignUpOpen(false)
   return (
     <Modal open={true} onClose={() => setSignInOpen(false)}>
       <Container>
-        <Wrapper>
-          <CloseRounded
-            style={{
-              position: "absolute",
-              top: "24px",
-              right: "30px",
-              cursor: "pointer",
-            }}
-            onClick={() => setSignInOpen(false)}
-          />
-          <Title>Sign In</Title>
-          <OutlinedBox
-            googleButton={TroubleshootRounded}
-            style={{ margin: "24px" }}
-            onClick={handleGoogleLogin}
-          >
-            <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
-            Sign In with Google
-          </OutlinedBox>
-          <Divider>
-            <Line />
-            or
-            <Line />
-          </Divider>
-          <OutlinedBox style={{ marginTop: "24px" }}>
-            <EmailRounded
-              sx={{ fontSize: "20px" }}
-              style={{ paddingRight: "12px" }}
-            />
-            <TextInput
-              placeholder="Email Id"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </OutlinedBox>
-          <Error error={emailError}>{emailError}</Error>
-          <OutlinedBox>
-            <PasswordRounded
-              sx={{ fontSize: "20px" }}
-              style={{ paddingRight: "12px" }}
-            />
-            <TextInput
-              placeholder="Password"
-              type={values.showPassword ? "text" : "password"}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <IconButton
-              color="inherit"
-              onClick={() =>
-                setValues({ ...values, showPassword: !values.showPassword })
-              }
-            >
-              {values.showPassword ? (
-                <Visibility sx={{ fontSize: "20px" }} />
-              ) : (
-                <VisibilityOff sx={{ fontSize: "20px" }} />
-              )}
-            </IconButton>
-          </OutlinedBox>
-          <Error error={credentialError}>{credentialError}</Error>
-          <OutlinedBox
-            button={true}
-            activeButton={!disabled}
-            style={{ marginTop: "6px" }}
-            onClick={handleLogin}
-          >
-            {Loading ? (
-              <CircularProgress color="inherit" size={20} />
-            ) : (
-              "Sign In"
-            )}
-          </OutlinedBox>
-          <LoginText>
-            Don't have an account ?
-            <Span
-              onClick={() => {
-                setSignUpOpen(true);
-                setSignInOpen(false);
-              }}
+        {!showForgotPassword ? (
+          <Wrapper>
+            <CloseRounded
               style={{
-                fontWeight: "500",
-                marginLeft: "6px",
+                position: "absolute",
+                top: "24px",
+                right: "30px",
                 cursor: "pointer",
               }}
-            >
-              Create Account
-            </Span>
-          </LoginText>
-        </Wrapper>
+              onClick={() => setSignInOpen(false)}
+            />
+            <>
+              <Title>Sign In</Title>
+              <OutlinedBox
+                googleButton={TroubleshootRounded}
+                style={{ margin: "24px" }}
+                onClick={handleGoogleLogin}
+              >
+                <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
+                Sign In with Google
+              </OutlinedBox>
+              <Divider>
+                <Line />
+                or
+                <Line />
+              </Divider>
+              <OutlinedBox style={{ marginTop: "24px" }}>
+                <EmailRounded
+                  sx={{ fontSize: "20px" }}
+                  style={{ paddingRight: "12px" }}
+                />
+                <TextInput
+                  placeholder="Email Id"
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </OutlinedBox>
+              <Error error={emailError}>{emailError}</Error>
+              <OutlinedBox>
+                <PasswordRounded
+                  sx={{ fontSize: "20px" }}
+                  style={{ paddingRight: "12px" }}
+                />
+                <TextInput
+                  placeholder="Password"
+                  type={values.showPassword ? "text" : "password"}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <IconButton
+                  color="inherit"
+                  onClick={() =>
+                    setValues({ ...values, showPassword: !values.showPassword })
+                  }
+                >
+                  {values.showPassword ? (
+                    <Visibility sx={{ fontSize: "20px" }} />
+                  ) : (
+                    <VisibilityOff sx={{ fontSize: "20px" }} />
+                  )}
+                </IconButton>
+              </OutlinedBox>
+              <Error error={credentialError}>{credentialError}</Error>
+              <OutlinedBox
+                button={true}
+                activeButton={!disabled}
+                style={{ marginTop: "6px" }}
+                onClick={handleLogin}
+              >
+                {Loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : (
+                  "Sign In"
+                )}
+              </OutlinedBox>
+              <ForgetPassword onClick={() => { setShowForgotPassword(true) }}><b>Forgot password ?</b></ForgetPassword>
+            </>
+            <LoginText>
+              Don't have an account ?
+              <Span
+                onClick={() => {
+                  setSignUpOpen(true);
+                  setSignInOpen(false);
+                }}
+                style={{
+                  fontWeight: "500",
+                  marginLeft: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                Create Account
+              </Span>
+            </LoginText>
+          </Wrapper>
+        ) : (
+          <Wrapper>
+            <CloseRounded
+              style={{
+                position: "absolute",
+                top: "24px",
+                right: "30px",
+                cursor: "pointer",
+              }}
+              onClick={() => { closeForgetPassword() }}
+            />
+            {!showOTP ?
+              <>
+                <Title>Reset Password</Title>
+                {resettingPassword ?
+                  <div style={{ padding: '12px 26px', marginBottom: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', justifyContent: 'center' }}>Updating password<CircularProgress color="inherit" size={20} /></div>
+                  :
+                  <>
+
+                    <OutlinedBox style={{ marginTop: "24px" }}>
+                      <EmailRounded
+                        sx={{ fontSize: "20px" }}
+                        style={{ paddingRight: "12px" }}
+                      />
+                      <TextInput
+                        placeholder="Email Id"
+                        type="email"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </OutlinedBox>
+                    <Error error={emailError}>{emailError}</Error>
+                    <OutlinedBox>
+                      <PasswordRounded
+                        sx={{ fontSize: "20px" }}
+                        style={{ paddingRight: "12px" }}
+                      />
+                      <TextInput
+                        placeholder="New Password"
+                        type="text"
+                        onChange={(e) => setNewpassword(e.target.value)}
+                      />
+                    </OutlinedBox>
+                    <OutlinedBox>
+                      <PasswordRounded
+                        sx={{ fontSize: "20px" }}
+                        style={{ paddingRight: "12px" }}
+                      />
+                      <TextInput
+                        placeholder="Confirm Password"
+                        type={values.showPassword ? "text" : "password"}
+                        onChange={(e) => setConfirmedpassword(e.target.value)}
+                      />
+                      <IconButton
+                        color="inherit"
+                        onClick={() =>
+                          setValues({ ...values, showPassword: !values.showPassword })
+                        }
+                      >
+                        {values.showPassword ? (
+                          <Visibility sx={{ fontSize: "20px" }} />
+                        ) : (
+                          <VisibilityOff sx={{ fontSize: "20px" }} />
+                        )}
+                      </IconButton>
+                    </OutlinedBox>
+                    <Error error={samepassword}>{samepassword}</Error>
+                    <OutlinedBox
+                      button={true}
+                      activeButton={!resetDisabled}
+                      style={{ marginTop: "6px", marginBottom: "24px" }}
+                      onClick={() => sendOtp()}
+                    >
+                      {Loading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : (
+                        "Submit"
+                      )}
+                    </OutlinedBox>
+                    <LoginText>
+                      Don't have an account ?
+                      <Span
+                        onClick={() => {
+                          setSignUpOpen(true);
+                          setSignInOpen(false);
+                        }}
+                        style={{
+                          fontWeight: "500",
+                          marginLeft: "6px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Create Account
+                      </Span>
+                    </LoginText>
+                  </>
+                }
+              </>
+
+              :
+              <OTP email={email} name="User" otpVerified={otpVerified} setOtpVerified={setOtpVerified} reason="FORGOTPASSWORD" />
+            }
+
+          </Wrapper>
+
+        )}
       </Container>
     </Modal>
   );

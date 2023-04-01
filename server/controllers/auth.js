@@ -38,28 +38,15 @@ export const signup = async (req, res, next) => {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(req.body.password, salt);
         const newUser = new User({ ...req.body, password: hashedPassword });
-        
+
         newUser.save().then((user) => {
-            res.status(200).json({user});
+
+            // create jwt token
+            const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
+            res.status(200).json({ token, user });
         }).catch((err) => {
             next(err);
         });
-        // // Step 2 - Generate a verification token with the user's ID
-        // const verificationToken = newUser.generateVerificationToken();
-        // // Step 3 - Email the user a unique verification link
-        // const url = `http://localhost:8800/api/auth/verify/${verificationToken}`
-        // transporter.sendMail({
-        //     to: email,
-        //     subject: 'Verify Account',
-        //     html: `Click <a href = '${url}'>here</a>  to confirm your email.`
-        // }, (err) => {
-        //     if (err) {
-        //         next(err)
-        //     } else {
-        //         newUser.save();
-        //         res.status(200).json({ message: `Sent a verification email to ${email}` });
-        //     }
-        // })
     } catch (err) {
         next(err);
     }
@@ -71,7 +58,7 @@ export const signin = async (req, res, next) => {
         if (!user) {
             return next(createError(201, "User not found"));
         }
-        if(user.googleSignIn){
+        if (user.googleSignIn) {
             return next(createError(201, "Entered email is Signed Up with google account. Please SignIn with google."));
         }
         const validPassword = await bcrypt.compareSync(req.body.password, user.password);
@@ -80,7 +67,7 @@ export const signin = async (req, res, next) => {
         }
 
         // create jwt token
-        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn : "24h"});
+        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
         res.status(200).json({ token, user });
 
     } catch (err) {
@@ -88,43 +75,6 @@ export const signin = async (req, res, next) => {
     }
 }
 
-
-export const verify = async (req, res) => {
-    const { token } = req.params
-    // Check we have an id
-    if (!token) {
-        return res.status(422).send({
-            message: "Missing Token"
-        });
-    }
-    // Step 1 -  Verify the token from the URL
-    let payload = null
-    try {
-        payload = jwt.verify(
-            token,
-            process.env.USER_VERIFICATION_TOKEN_SECRET
-        );
-    } catch (err) {
-        return res.status(500).send(err);
-    }
-    try {
-        // Step 2 - Find user with matching ID
-        const user = await User.findOne({ _id: payload.ID }).exec();
-        if (!user) {
-            return res.status(404).send({
-                message: "User does not  exists"
-            });
-        }
-        // Step 3 - Update user verification status to true
-        user.verified = true;
-        await user.save();
-        return res.status(200).send({
-            message: "Account Verified"
-        });
-    } catch (err) {
-        return res.status(500).send(err);
-    }
-}
 
 
 export const googleAuthSignIn = async (req, res, next) => {
@@ -138,11 +88,11 @@ export const googleAuthSignIn = async (req, res, next) => {
             } catch (err) {
                 next(err);
             }
-        }else if(user.googleSignIn){
-            const token = jwt.sign({ id: user._id }, process.env.JWT,{ expiresIn : "24h" });
+        } else if (user.googleSignIn) {
+            const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
             const { password, ...others } = user._doc;
             res.cookie("access_token", token, { httpOnly: true }).status(200).json(others);
-        }else{  
+        } else {
             return next(createError(201, "User already exists with this email can't do google auth"));
         }
     } catch (err) {
@@ -155,26 +105,160 @@ export const logout = (req, res) => {
 }
 
 
+/*
+Welcome template
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDHQMmI5x5qWbOrEuJuFWkSIBQoT_fFyoKOKYqOSoIvQ&s" alt="VEXA Logo" style="display: block; margin: 0 auto; max-width: 200px; margin-bottom: 20px;">
+        <h1 style="color: #007bff; text-align: center; margin-bottom: 20px;">Welcome to VEXA!</h1>
+        <p style="font-size: 14px; margin-bottom: 20px;">Dear User,</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">Thank you for choosing VEXA to manage your tasks. We're excited to have you on board and look forward to helping you be more productive.</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">To get started, simply log in to your account using your email address and the password you set up during registration.</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">If you have any questions or need assistance, please don't hesitate to contact our support team. We're here to help!</p>
+        <br>
+        <p style="font-size: 16px; margin-bottom: 20px;">Best regards,</p>
+        <p style="font-size: 16px; margin-bottom: 20px;">The VEXA Team</p>
+    </div> */
+
 export const generateOTP = async (req, res) => {
-    req.app.locals.OTP = await otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true,  });
-    return res.status(200).send({code: req.app.locals.OTP});
+    req.app.locals.OTP = await otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true, });
+    const { email } = req.query;
+    const { name } = req.query;
+    const { reason } = req.query;
+    const verifyOtp = {
+        to: email,
+        subject: 'Account Verification OTP',
+        html: `
+        <div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDHQMmI5x5qWbOrEuJuFWkSIBQoT_fFyoKOKYqOSoIvQ&s" alt="VEXA Logo" style="display: block; margin: 0 auto; max-width: 200px; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 500; color: #854CE6; text-align: center; margin-bottom: 30px;">Verify Your VEXA Account</h1>
+    <div style="background-color: #FFF; border: 1px solid #e5e5e5; border-radius: 5px; box-shadow: 0px 3px 6px rgba(0,0,0,0.05);">
+        <div style="background-color: #854CE6; border-top-left-radius: 5px; border-top-right-radius: 5px; padding: 20px 0;">
+            <h2 style="font-size: 28px; font-weight: 500; color: #FFF; text-align: center; margin-bottom: 10px;">Verification Code</h2>
+            <h1 style="font-size: 32px; font-weight: 500; color: #FFF; text-align: center; margin-bottom: 20px;">${req.app.locals.OTP}</h1>
+        </div>
+        <div style="padding: 30px;">
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Dear ${name},</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Thank you for creating a VEXA account. To activate your account, please enter the following verification code:</p>
+            <p style="font-size: 20px; font-weight: 500; color: #666; text-align: center; margin-bottom: 30px; color: #854CE6;">${req.app.locals.OTP}</p>
+            <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Please enter this code in the VEXA app to activate your account.</p>
+            <p style="font-size: 12px; color: #666; margin-bottom: 20px;">If you did not create a VEXA account, please disregard this email.</p>
+        </div>
+    </div>
+    <br>
+    <p style="font-size: 16px; color: #666; margin-bottom: 20px; text-align: center;">Best regards,<br>The VEXA Team</p>
+</div>
+        `
+    };
+
+    const resetPasswordOtp = {
+        to: email,
+        subject: 'VEXA Reset Password Verification',
+        html: `
+            <div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDHQMmI5x5qWbOrEuJuFWkSIBQoT_fFyoKOKYqOSoIvQ&s" alt="VEXA Logo" style="display: block; margin: 0 auto; max-width: 200px; margin-bottom: 20px;">
+                <h1 style="font-size: 22px; font-weight: 500; color: #854CE6; text-align: center; margin-bottom: 30px;">Reset Your VEXA Account Password</h1>
+                <div style="background-color: #FFF; border: 1px solid #e5e5e5; border-radius: 5px; box-shadow: 0px 3px 6px rgba(0,0,0,0.05);">
+                    <div style="background-color: #854CE6; border-top-left-radius: 5px; border-top-right-radius: 5px; padding: 20px 0;">
+                        <h2 style="font-size: 28px; font-weight: 500; color: #FFF; text-align: center; margin-bottom: 10px;">Verification Code</h2>
+                        <h1 style="font-size: 32px; font-weight: 500; color: #FFF; text-align: center; margin-bottom: 20px;">${req.app.locals.OTP}</h1>
+                    </div>
+                    <div style="padding: 30px;">
+                        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Dear ${name},</p>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">To reset your VEXA account password, please enter the following verification code:</p>
+                        <p style="font-size: 20px; font-weight: 500; color: #666; text-align: center; margin-bottom: 30px; color: #854CE6;">${req.app.locals.OTP}</p>
+                        <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Please enter this code in the VEXA app to reset your password.</p>
+                        <p style="font-size: 12px; color: #666; margin-bottom: 20px;">If you did not request a password reset, please disregard this email.</p>
+                    </div>
+                </div>
+                <br>
+                <p style="font-size: 16px; color: #666; margin-bottom: 20px; text-align: center;">Best regards,<br>The VEXA Team</p>
+            </div>
+        `
+    };
+    if (reason === "FORGOTPASSWORD") {
+        transporter.sendMail(resetPasswordOtp, (err) => {
+            if (err) {
+                next(err)
+            } else {
+                return res.status(200).send({ message: "OTP sent" });
+            }
+        })
+    } else {
+        transporter.sendMail(verifyOtp, (err) => {
+            if (err) {
+                next(err)
+            } else {
+                return res.status(200).send({ message: "OTP sent" });
+            }
+        })
+    }
 }
 
 export const verifyOTP = async (req, res, next) => {
-    const {code} = req.query;
-    if(parseInt(code) === parseInt(req.app.locals.OTP)){
+    const { code } = req.query;
+    if (parseInt(code) === parseInt(req.app.locals.OTP)) {
         req.app.locals.OTP = null;
         req.app.locals.resetSession = true;
-        res.status(200).send({message: "OTP verified"});
+        res.status(200).send({ message: "OTP verified" });
     }
     return next(createError(201, "Wrong OTP"));
 }
 
 export const createResetSession = async (req, res, next) => {
-    if(req.app.locals.resetSession){
+    if (req.app.locals.resetSession) {
         req.app.locals.resetSession = false;
-        return res.status(200).send({message: "Access granted"});
+        return res.status(200).send({ message: "Access granted" });
     }
 
-    return res.status(400).send({message: "Session expired"});
+    return res.status(400).send({ message: "Session expired" });
+}
+
+export const findUserByEmail = async (req, res, next) => {
+    const { email } = req.query;
+    try {
+        const user = await User.findOne({ email: email });
+        if (user) {
+            return res.status(200).send({
+                message: "User found"
+            });
+        } else {
+            return res.status(202).send({
+                message: "User not found"
+            });
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const resetPassword = async (req, res, next) => {
+
+    if(!req.app.locals.resetSession) return res.status(440).send({ message: "Session expired" });
+
+    const { email, password } = req.body;
+    try {
+        await User.findOne({ email }).then(user => {
+            if (user) {
+
+                const salt = bcrypt.genSaltSync(10);
+                const hashedPassword = bcrypt.hashSync(password, salt);
+                User.updateOne({ email: email }, { $set: { password: hashedPassword } }).then(() => {
+
+                    req.app.locals.resetSession = false;
+                    return res.status(200).send({
+                        message: "Password reset successful"
+                    });
+
+                }).catch(err => {
+                    next(err);
+                });
+            } else {
+                return res.status(202).send({
+                    message: "User not found"
+                });
+            }
+        });
+    } catch (err) {
+        next(err);
+    }
 }
