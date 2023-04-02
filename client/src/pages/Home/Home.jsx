@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Navbar from './components/Navbar'
-import Header from './components/Header'
+import Hero from './components/Hero'
 import Footer from './components/Footer'
 import SignUp from '../../components/SignUp'
 import SignIn from '../../components/SignIn'
@@ -18,9 +18,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    @media (max-width: 768px) {
       padding: 0px 20px !important;
-    }
 `
 const Content = styled.div`
     width: 100%;
@@ -39,7 +37,7 @@ const Home = () => {
         <Body>
             <Container>
                 <Navbar setSignInOpen={setSignInOpen} />
-                <Header setSignInOpen={setSignInOpen} />
+                <Hero setSignInOpen={setSignInOpen} />
                 <Content>Content</Content>
                 <Footer />
                 {SignUpOpen && (

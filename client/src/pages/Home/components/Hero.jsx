@@ -53,7 +53,10 @@ const Button = styled.button`
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  @media (max-width: 768px) {
+  @media (max-width: 1250px) {
+    width: 80%;
+  }
+  @media (max-width: 600px) {
     width: 100%;
     font-size: 16px;
   }
@@ -66,12 +69,12 @@ const Image = styled.img`
   width: 100%;
   object-fit: scale-down;
   border-radius: 10px;
-  @media (max-width: 768px) {
+  @media (max-width: 1000px) {
     display: none;
   }
 `
 
-const Header = ({ setSignInOpen }) => {
+const Hero = ({ setSignInOpen }) => {
   return (
     <Container id="home">
       <Left>
@@ -85,4 +88,4 @@ const Header = ({ setSignInOpen }) => {
   )
 }
 
-export default Header
+export default Hero
