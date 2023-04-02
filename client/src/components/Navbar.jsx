@@ -224,12 +224,6 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
           </User>
         </Wrapper>
       </Container>
-      {SignUpOpen && (
-        <SignUp setSignUpOpen={setSignUpOpen} setSignInOpen={setSignInOpen} />
-      )}
-      {SignInOpen && (
-        <SignIn setSignInOpen={setSignInOpen} setSignUpOpen={setSignUpOpen} />
-      )}
       {currentUser && (
         <AccountDialog
           open={open}
