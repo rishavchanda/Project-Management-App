@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import HeroBgAnimation from '../components/HeroBgAnimation'
-
+import Groups3Icon from '@mui/icons-material/Groups3';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
+import PublicIcon from '@mui/icons-material/Public';
 
 const FeaturesWrapper = styled.section`
   padding: 40px 0;
@@ -8,14 +11,15 @@ const FeaturesWrapper = styled.section`
   flex-direction: column;
   align-items: center;
   background-color: #13111C;
+  padding-bottom: 150px;
 `;
 
 const FeaturesTitle = styled.div`
-  font-size: 42px;
+  font-size: 52px;
   text-align: center;
-  font-weight: 700;
+  font-weight: 800;
   margin-top: 30px;
-    color: hsl(220, 80%, 75%);
+    color: #306EE8;
     @media (max-width: 768px) {
         margin-top: 12px;
         font-size: 24px;
@@ -39,12 +43,17 @@ const FeatureDescription = styled.p`
   }
 `;
 
+const Content = styled.div`
+position: relative;
+`;
 
 const FeaturesContainer = styled.div`
+    position: relative;
+    z-index: 1;
     grid-template-columns: repeat(2, 1fr);
     display: grid;
-    grid-column-gap: 40px;
-    grid-row-gap: 40px;
+    grid-column-gap: 60px;
+    grid-row-gap: 60px;
     @media (max-width: 768px) {
         grid-template-columns: repeat(1, 1fr);
         grid-column-gap: 30px;
@@ -54,62 +63,105 @@ const FeaturesContainer = styled.div`
 `;
 
 const FeatureCard = styled.div`
-  width: 300px;
-  height: 200px;
+  width: 350px;
+  height: 190px;
+  position: relative;
   background-color: hsl(250, 24%, 9%);
-  border: 1px solid #854CE6;
+  border: 0.1px solid #306EE8;
   border-radius: 16px;
   padding: 24px 42px;
   box-shadow: rgba(23, 92, 230, 0.15) 0px 4px 24px;
   transition: transform 0.2s ease-in-out;
+  display: flex;
   &:hover {
     transform: translateY(-10px);
   }
-  @media (max-width: 768px) {
-    padding: 12px 20px;
+  @media (max-width: 925px) {
+    width: 300px;
     }
 
+  @media (max-width: 728px)
+  {
+    padding: 20px 20px;
+  }
+
 `;
 
-const FeatureIcon = styled.i`
-  font-size: 3rem;
-  color: #854CE6;
-  margin-bottom: 20px;
+const FeatureIcon = styled.div`
+  width: 80px;
+  height: 80px;
+  color:  #306EE8;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  flex-shrink: 0;
+  border-top-right-radius: 40%;
+  border-top-left-radius: 60%;
+  border-bottom-left-radius: 40%;
+  border-bottom-right-radius: 16px;
+  border: 2px solid hsl(220, 80%, 75%,8%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 925px) {
+    width: 80px;
+    height: 80px;
+    }
 `;
 
-const FeatureTitle = styled.h3`
+const FeatureTitle = styled.div`
   font-size: 20px;
   color: hsl(220, 80%, 75%);
   margin-bottom: 10px;
+  margin-top: 16px;
+  font-weight: 600;
 `;
 
-const FeatureCardDescription = styled.p`
+const FeatureCardDescription = styled.div`
   font-size: 16px;
   line-height: 1.5;
   color: hsl(246,  6%, 65%);
 `;
 
-const featuresData = [{ icon: 'fa-tasks', title: 'Project Management', description: 'Effortlessly manage your personal projects and assign tasks to team members while keeping track of progress.', }, { icon: 'fa-users', title: 'Team Collaboration', description: 'Collaborate with your team members in real-time, assign tasks, and keep track of your team’s progress.', }, { icon: 'fa-users', title: 'Community Building', description: 'Connect with members of similar interests, build communities, and grow your network.', }, { icon: 'fa-clock', title: 'Time Tracking', description: 'Track your time and improve your productivity by setting goals and keeping track of your progress.', },];
+const BgImage = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const featuresData = [{ icon: <ElectricBoltIcon />, title: 'Project Management', description: 'Effortlessly manage your personal projects and assign tasks to team members while keeping track of progress.', },
+{ icon: <Groups3Icon />, title: 'Team Collaboration', description: 'Collaborate with your team members in real-time, assign tasks, and keep track of your team’s progress.', },
+{ icon: <PublicIcon />, title: 'Community Building', description: 'Connect with members of similar interests, build communities, and grow your network.', },
+{ icon: <TimelineIcon />, title: 'Time Tracking', description: 'Track your time and improve your productivity by setting goals and keeping track of your progress.', },];
 
 const Features = () => {
   return (
     <FeaturesWrapper>
       <FeaturesTitle>Key Features</FeaturesTitle>
       <FeatureDescription>Discover how our app simplifies project management and makes collaboration effortless.</FeatureDescription>
-      <div style={{ position: 'relative' }}>
-        {/* <HeroBgAnimation style={{ position: 'absolute', top: 20, left: 20, width: '80%', height: '80%', zIndex: -1 }} /> */}
+      <Content>
         <FeaturesContainer>
           {featuresData.map((feature, index) => (
             <FeatureCard key={index} >
-              <div style={{ position: 'relative' ,zIndex: 1}}>
-                <FeatureIcon className={`fas ${feature.icon}`} />
+              <div>
                 <FeatureTitle>{feature.title}</FeatureTitle>
                 <FeatureCardDescription>{feature.description}</FeatureCardDescription>
               </div>
+              <FeatureIcon>
+                {feature.icon}
+              </FeatureIcon>
             </FeatureCard>
           ))}
         </FeaturesContainer>
-      </div>
+        <BgImage>
+          <HeroBgAnimation />
+        </BgImage>
+
+      </Content>
     </FeaturesWrapper>
   );
 };

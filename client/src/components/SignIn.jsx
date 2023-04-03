@@ -141,6 +141,7 @@ const ForgetPassword = styled.div`
   margin: 8px 26px;
   display: block;
   cursor: pointer;
+  text-align: right;
   &:hover {
     color: ${({ theme }) => theme.primary};
   }
@@ -477,6 +478,7 @@ const googleLogin = useGoogleLogin({
                 </IconButton>
               </OutlinedBox>
               <Error error={credentialError}>{credentialError}</Error>
+              <ForgetPassword onClick={() => { setShowForgotPassword(true) }}><b>Forgot password ?</b></ForgetPassword>
               <OutlinedBox
                 button={true}
                 activeButton={!disabled}
@@ -489,7 +491,6 @@ const googleLogin = useGoogleLogin({
                   "Sign In"
                 )}
               </OutlinedBox>
-              <ForgetPassword onClick={() => { setShowForgotPassword(true) }}><b>Forgot password ?</b></ForgetPassword>
             </>
             <LoginText>
               Don't have an account ?
