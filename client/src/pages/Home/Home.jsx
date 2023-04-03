@@ -3,6 +3,10 @@ import styled from 'styled-components'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Footer from './components/Footer'
+import Features from './components/Features'
+import Testimonials from './components/Testimonials'
+import Team from './components/Team'
+import About from './components/About'
 import SignUp from '../../components/SignUp'
 import SignIn from '../../components/SignIn'
 
@@ -18,15 +22,12 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-      padding: 0px 20px !important;
+      padding: 0px 0px !important;
 `
 const Content = styled.div`
     width: 100%;
     height: 100%;
     background-color: ${({ theme }) => theme.card};
-    @media (max-width: 768px) {
-      padding: 0px 20px !important;
-    }
 `
 
 const Home = () => {
@@ -38,7 +39,12 @@ const Home = () => {
             <Container>
                 <Navbar setSignInOpen={setSignInOpen} />
                 <Hero setSignInOpen={setSignInOpen} />
-                <Content>Content</Content>
+                <Content>
+                    <Features/>
+                    <Testimonials/>
+                    <Team/>
+                    <About/>
+                </Content>
                 <Footer />
                 {SignUpOpen && (
                     <SignUp setSignUpOpen={setSignUpOpen} setSignInOpen={setSignInOpen} />

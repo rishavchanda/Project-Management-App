@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import DemoImage from "../../../Images/AddProject.gif"
 
 const Container = styled.div`
-  width: 100%;
   height: 80vh;
   margin: 6px 14px;
   max-width: 1320px;
@@ -15,7 +14,7 @@ const Container = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 20px;
-    padding: 0px 20px !important;
+    padding: 20px 12px 30px 12px!important;
   }
 `
 const Left = styled.div`
