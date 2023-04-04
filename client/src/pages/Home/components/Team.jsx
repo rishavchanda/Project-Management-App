@@ -58,7 +58,7 @@ const Team = () => {
     bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut eros dapibus, molestie lorem vel, pulvinar magna."
   }]
   return (
-    <TeamWrapper>
+    <TeamWrapper id="team">
       <Title>Meet the crew</Title>
       <Description>We're a small, remote team working on interesting problems at the edge of compute.</Description>
       <TeamContainer>
