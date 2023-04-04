@@ -43,7 +43,7 @@ const DescriptiveTag = styled.p`
   color: ${({ theme }) => theme.soft2};
 `
 const Button = styled.button`
-  width: 40%;
+  width: 50%;
   padding: 16px 20px;
   font-size: 20px;
   font-weight: 600;

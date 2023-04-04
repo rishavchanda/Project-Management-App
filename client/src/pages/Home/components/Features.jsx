@@ -22,7 +22,7 @@ const FeaturesTitle = styled.div`
     color: #306EE8;
     @media (max-width: 768px) {
         margin-top: 12px;
-        font-size: 24px;
+        font-size: 36px;
     }
 `;
 
@@ -99,7 +99,7 @@ const FeatureIcon = styled.div`
   border-top-left-radius: 60%;
   border-bottom-left-radius: 40%;
   border-bottom-right-radius: 16px;
-  border: 2px solid hsl(220, 80%, 75%,8%);
+  border: 2px solid hsl(220, 80%, 75%,30%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -140,7 +140,7 @@ const featuresData = [{ icon: <ElectricBoltIcon />, title: 'Project Management',
 
 const Features = () => {
   return (
-    <FeaturesWrapper>
+    <FeaturesWrapper id="features">
       <FeaturesTitle>Key Features</FeaturesTitle>
       <FeatureDescription>Discover how our app simplifies project management and makes collaboration effortless.</FeatureDescription>
       <Content>

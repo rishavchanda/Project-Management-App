@@ -76,7 +76,7 @@ function Footer() {
       <Nav>
         <NavLink href="#home">Home</NavLink>
         <NavLink href="#features">Features</NavLink>
-        <NavLink href="#pricing">Pricing</NavLink>
+        <NavLink href="#benefits">Benefits</NavLink>
         <NavLink href="#testimonials">Testimonials</NavLink>
         <NavLink href="#about-us">About Us</NavLink>
         <NavLink href="#contact">Contact Us</NavLink>

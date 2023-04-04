@@ -30,7 +30,7 @@ const TestimonialAuthor = styled.p`
 `;
 
 const Testimonials = () => {
-  const testimonialsData = [    {      id: 1,      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed auctor justo quis felis malesuada, a feugiat elit tristique.',      author: 'John Doe',      jobTitle: 'CEO'    },    {      id: 2,      text: 'Donec laoreet elit in malesuada tempus. Aliquam pretium blandit commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',      author: 'Jane Smith',      jobTitle: 'Marketing Manager'    },    {      id: 3,      text: 'Fusce eget turpis eget nulla fringilla auctor. Praesent eget mi nec quam dictum consequat nec eu nibh.',      author: 'David Lee',      jobTitle: 'Software Engineer'    }  ];
+  const testimonialsData = [{ id: 1, text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed auctor justo quis felis malesuada, a feugiat elit tristique.', author: 'John Doe', jobTitle: 'CEO' }, { id: 2, text: 'Donec laoreet elit in malesuada tempus. Aliquam pretium blandit commodo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.', author: 'Jane Smith', jobTitle: 'Marketing Manager' }, { id: 3, text: 'Fusce eget turpis eget nulla fringilla auctor. Praesent eget mi nec quam dictum consequat nec eu nibh.', author: 'David Lee', jobTitle: 'Software Engineer' }];
 
   return (
     <TestimonialsContainer>

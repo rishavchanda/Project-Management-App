@@ -30,8 +30,9 @@ const Menu = styled.ul`
   }
 `;
 
-const MenuItem = styled.li`
+const MenuItem = styled.a`
   font-size: 16px;
+  text-decoration: none;
   font-weight: 500;
   color: ${({ theme }) => theme.text};
   cursor: pointer;
@@ -68,9 +69,9 @@ const Navbar = ({ setSignInOpen }) => {
     <Container>
       <Logo>VEXA</Logo>
       <Menu>
-        <MenuItem>Home</MenuItem>
-        <MenuItem>Products</MenuItem>
-        <MenuItem>Services</MenuItem>
+        <MenuItem href="#home">Home</MenuItem>
+        <MenuItem href="#features">Features</MenuItem>
+        <MenuItem href="#benefits">Benifits</MenuItem>
         <MenuItem>About</MenuItem>
         <MenuItem>Contact</MenuItem>
       </Menu>

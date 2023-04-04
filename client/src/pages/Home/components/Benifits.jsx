@@ -3,6 +3,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ForumIcon from '@mui/icons-material/Forum';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HeroBgAnimation from '../components/HeroBgAnimation'
+import Diversity3Icon from '@mui/icons-material/Diversity3';
 
 const FeaturesWrapper = styled.section`
   padding: 40px 0;
@@ -21,7 +22,7 @@ const FeaturesTitle = styled.div`
     color: #854CE6;
     @media (max-width: 768px) {
         margin-top: 12px;
-        font-size: 24px;
+        font-size: 36px;
     }
 `;
 
@@ -36,7 +37,7 @@ const FeatureDescription = styled.p`
   color: hsl(246,  6%, 65%);
   margin-bottom: 80px;
   @media (max-width: 768px) {
-    width: 100%;
+    width: 90%;
       font-size: 16px;
       margin-bottom: 60px;
   }
@@ -92,20 +93,20 @@ const FeatureIcon = styled.div`
   height: 80px;
   color:  #854CE6;
   position: absolute;
-  top: 0px;
+  bottom: 0px;
   right: 0px;
-  flex-grow: 1;
-  border-top-right-radius: 16px;
-  border-bottom-left-radius: 60%;
-  border-top-left-radius: 40%;
-  border-bottom-right-radius: 40%;
-  border: 2px solid hsl(220, 80%, 75%,8%);
+  flex-shrink: 0;
+  border-top-right-radius: 40%;
+  border-top-left-radius: 60%;
+  border-bottom-left-radius: 40%;
+  border-bottom-right-radius: 16px;
+  border: 2px solid hsl(220, 80%, 75%,30%);
   display: flex;
   justify-content: center;
   align-items: center;
   @media (max-width: 925px) {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     }
 `;
 
@@ -113,7 +114,7 @@ const FeatureTitle = styled.div`
   font-size: 20px;
   color: #854CE6;
   margin-bottom: 10px;
-  margin-top: 30px;
+  margin-top: 16px;
   font-weight: 600;
 `;
 
@@ -136,12 +137,13 @@ const BgImage = styled.div`
 
 const featuresData = [{ icon: <TrendingUpIcon />, title: 'Increased Productivity', description: 'Effortlessly manage your personal projects and assign tasks to team members while keeping track of progress.', },
 { icon: <ForumIcon />, title: 'Improved Communication', description: 'Keep everyone on the same page and reduce misunderstandings with clear communication.', },
-{ icon: <CheckCircleOutlineIcon />, title: 'Better Project Outcomes', description: 'Make informed decisions and track progress to ensure successful project outcomes.', }];
+{ icon: <CheckCircleOutlineIcon />, title: 'Better Project Outcomes', description: 'Make informed decisions and track progress to ensure successful project outcomes.', },
+{icon: <Diversity3Icon/>, title: 'Networking Opportunities', description: 'Connect and collaborate with other developers and professionals in your industry to expand your network and build valuable relationships.'}];
 
 const Benefits = () => {
 
     return (
-        <FeaturesWrapper>
+        <FeaturesWrapper id="benefits">
             <FeaturesTitle>Benefits</FeaturesTitle>
             <FeatureDescription>Discover the many benefits of using our app to manage your personal and team projects.</FeatureDescription>
             <Content>
