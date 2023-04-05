@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import DemoImage from "../../../Images/AddProject.gif"
+import HeaderImage from "../../../Images/Header.png"
 
 const Container = styled.div`
   height: 80vh;
@@ -15,6 +16,7 @@ const Container = styled.div`
     flex-direction: column;
     gap: 20px;
     padding: 20px 12px 30px 12px!important;
+    height: 70vh;
   }
 `
 const Left = styled.div`
@@ -60,12 +62,11 @@ const Button = styled.button`
     font-size: 16px;
   }
 `
-
 const Image = styled.img`
-  height: 76%;
+width: 500px;
+height: 500px;
   flex: 0.8;
   display: flex;
-  width: 100%;
   object-fit: scale-down;
   border-radius: 10px;
   @media (max-width: 1000px) {
@@ -81,8 +82,7 @@ const Hero = ({ setSignInOpen }) => {
         <DescriptiveTag>Take control of your projects and stay on top of your goals with our intuitive project management app. Say goodbye to chaos and hello to streamlined efficiency. Try it now and experience the difference.</DescriptiveTag>
         <Button onClick={() => setSignInOpen(true)}>Manage a New Project</Button>
       </Left>
-
-      <Image src={DemoImage} />
+      <Image src={HeaderImage} />
     </Container>
   )
 }

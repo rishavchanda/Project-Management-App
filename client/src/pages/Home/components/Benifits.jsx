@@ -6,20 +6,48 @@ import HeroBgAnimation from '../components/HeroBgAnimation'
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 
 const FeaturesWrapper = styled.section`
-  padding: 40px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #181622;
   padding-bottom: 150px;
+  margin-top: -90px;
+  @media (max-width: 768px) {
+    padding-bottom: 100px;
+    margin-top: -50px;
+  }
   background: linear-gradient(343.07deg, rgba(132, 59, 206, 0.06) 5.71%, rgba(132, 59, 206, 0) 64.83%);
 `;
+
+
+const Number = styled.div`
+width: 70px;
+height: 70px;
+  font-size: 36px;
+  font-weight: 800;
+  color: #854CE6;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #854CE616;
+  border: 6px solid #854CE6;
+  margin-bottom: 20px;
+  @media (max-width: 768px) {
+
+width: 50px;
+height: 50px;
+  font-size: 32px;
+  }
+`;
+
 
 const FeaturesTitle = styled.div`
   font-size: 52px;
   text-align: center;
   font-weight: 800;
-  margin-top: 30px;
+  margin-top: 20px;
     color: #854CE6;
     @media (max-width: 768px) {
         margin-top: 12px;
@@ -145,6 +173,7 @@ const Benefits = () => {
 
     return (
         <FeaturesWrapper id="benefits">
+          <Number>2</Number>
             <FeaturesTitle>Benefits</FeaturesTitle>
             <FeatureDescription>Discover the many benefits of using our app to manage your personal and team projects.</FeatureDescription>
             <Content>

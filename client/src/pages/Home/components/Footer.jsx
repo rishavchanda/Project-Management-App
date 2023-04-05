@@ -11,7 +11,7 @@ const FooterContainer = styled.footer`
   flex-direction: column;
   gap: 14px;
   align-items: center;
-  padding: 3rem;
+  padding: 1rem;
   color: ${({ theme }) => theme.text};
 `;
 
@@ -66,6 +66,7 @@ const Copyright = styled.p`
   margin-top: 1.5rem;
   font-size: 0.9rem;
   color: ${({ theme }) => theme.soft2};
+  text-align: center;
 `;
 
 function Footer() {
@@ -76,9 +77,7 @@ function Footer() {
         <NavLink href="#home">Home</NavLink>
         <NavLink href="#features">Features</NavLink>
         <NavLink href="#benefits">Benefits</NavLink>
-        <NavLink href="#testimonials">Testimonials</NavLink>
         <NavLink href="#team">Team</NavLink>
-        <NavLink href="#contact">Contact Us</NavLink>
       </Nav>
       <SocialMediaIcons>
         <SocialMediaIcon href="#"><FacebookIcon/></SocialMediaIcon>

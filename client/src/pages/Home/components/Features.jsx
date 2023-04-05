@@ -6,19 +6,48 @@ import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import PublicIcon from '@mui/icons-material/Public';
 
 const FeaturesWrapper = styled.section`
-  padding: 40px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #13111C;
-  padding-bottom: 150px;
+  padding-bottom: 200px;
+  margin-top: -80px;
+  background: linear-gradient(343.07deg, rgba(23, 92, 230, 0.02) 2.71%, rgba(23, 92, 230, 0.0) 64.83%);
+clip-path: polygon(0 0, 100% 0, 100% 100%,50% 95%, 0 100%);
+@media (max-width: 768px) {
+    padding-bottom: 100px;
+    margin-top: -40px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%,50% 98%, 0 100%);
+  }
+`;
+
+const Number = styled.div`
+width: 70px;
+height: 70px;
+  font-size: 36px;
+  font-weight: 800;
+  color: #306EE8;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 6px solid #306EE8;
+  background-color: #306EE816;
+  margin-bottom: 20px;
+  @media (max-width: 768px) {
+
+width: 50px;
+height: 50px;
+  font-size: 32px;
+  }
 `;
 
 const FeaturesTitle = styled.div`
   font-size: 52px;
   text-align: center;
   font-weight: 800;
-  margin-top: 30px;
+  margin-top: 20px;
     color: #306EE8;
     @media (max-width: 768px) {
         margin-top: 12px;
@@ -141,6 +170,7 @@ const featuresData = [{ icon: <ElectricBoltIcon />, title: 'Project Management',
 const Features = () => {
   return (
     <FeaturesWrapper id="features">
+      <Number>1</Number>
       <FeaturesTitle>Key Features</FeaturesTitle>
       <FeatureDescription>Discover how our app simplifies project management and makes collaboration effortless.</FeatureDescription>
       <Content>

@@ -53,7 +53,7 @@ const TeamMemberTitle = styled.div`
 `;
 
 const TeamMemberBio = styled.p`
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.5;
   color: ${({ theme }) => theme.soft2};
 `;

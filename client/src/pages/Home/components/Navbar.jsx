@@ -73,7 +73,6 @@ const Navbar = ({ setSignInOpen }) => {
         <MenuItem href="#features">Features</MenuItem>
         <MenuItem href="#benefits">Benifits</MenuItem>
         <MenuItem href="#team">About</MenuItem>
-        <MenuItem>Contact</MenuItem>
       </Menu>
       <Button onClick={() => setSignInOpen(true)}>
         <AccountCircleOutlinedIcon /> Sign In

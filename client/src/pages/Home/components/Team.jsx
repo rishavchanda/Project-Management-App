@@ -6,14 +6,14 @@ const TeamWrapper = styled.div`padding: 40px 0;
 display: flex;
 flex-direction: column;
 align-items: center;
-padding: 150px 0;
-background-image: linear-gradient(38.73deg, rgba(204, 0, 187, 0.25) 0%, rgba(201, 32, 184, 0) 50%), linear-gradient(141.27deg, rgba(0, 70, 209, 0) 50%, rgba(0, 70, 209, 0.25) 100%);
+padding: 40px 0px 100px 0px;   
+ background-image: linear-gradient(90deg, rgba(0,70,209,0.03) 0%, rgba(57,14,61,0.1) 100%);
+ clip-path: polygon(0 0, 100% 0, 100% 100%,50% 95%, 0 100%);
 `;
 
 const Title = styled.div`
   font-size: 52px;
   font-weight: 800;
-  margin-top: 30px;
   text-align: center;
   @media (max-width: 768px) {
       margin-top: 12px;
@@ -57,7 +57,7 @@ const Team = () => {
     photo: "https://avatars.githubusercontent.com/u/64485885?v=4",
     name: "Rishav Chanda",
     title: "Full-Stack Developer",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut eros dapibus, molestie lorem vel, pulvinar magna."
+    bio: "I have expertise in full-stack web development, Android app development, and MERN stack development. I am knowledgeable in various programming languages, frameworks, and technologies and strive to create high-quality, user-friendly applications."
   }]
   return (
     <TeamWrapper id="team">

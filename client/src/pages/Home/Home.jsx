@@ -26,8 +26,21 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-      padding: 0px 0px !important;
 `
+
+const Top = styled.div`
+width: 100%;
+display: flex;
+padding-bottom: 50px;
+flex-direction: column;
+align-items: center;
+background: linear-gradient(38.73deg, rgba(204, 0, 187, 0.15) 0%, rgba(201, 32, 184, 0) 50%), linear-gradient(141.27deg, rgba(0, 70, 209, 0) 50%, rgba(0, 70, 209, 0.15) 100%);
+clip-path: polygon(0 0, 100% 0, 100% 100%,50% 95%, 0 100%);
+@media (max-width: 768px) {
+    clip-path: polygon(0 0, 100% 0, 100% 100%,50% 98%, 0 100%);
+    padding-bottom: 0px;
+}
+`;
 const Content = styled.div`
     width: 100%;
     height: 100%;
@@ -43,8 +56,10 @@ const Home = () => {
     return (
         <Body>
             <Container>
-                <Navbar setSignInOpen={setSignInOpen} />
-                <Hero setSignInOpen={setSignInOpen} />
+                <Top>
+                    <Navbar setSignInOpen={setSignInOpen} />
+                    <Hero setSignInOpen={setSignInOpen} />
+                </Top>
                 <Content>
                     <Features />
                     {/* <Testimonials/> */}
@@ -52,7 +67,7 @@ const Home = () => {
                     {/* <Faq/> */}
                     <Team />
                     <About />
-                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <Footer />
                     </div>
                 </Content>
