@@ -13,7 +13,6 @@ const FooterContainer = styled.footer`
   align-items: center;
   padding: 3rem;
   color: ${({ theme }) => theme.text};
-
 `;
 
 const Logo = styled.img`

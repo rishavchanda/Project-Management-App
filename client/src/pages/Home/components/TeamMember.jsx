@@ -6,7 +6,8 @@ const TeamMemberContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: hsl(250, 24%, 9%);
-  border: 1px solid #282D45;
+  box-shadow: RGB(252, 3, 111, 0.15) 0px 4px 24px;
+  border: 1px solid RGB(252, 3, 111,30%);
   padding: 24px 24px;
     border-radius: 12px;
     gap: 8px;

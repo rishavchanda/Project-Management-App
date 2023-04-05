@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 
 const Container = styled.div`
-  width: 90%;
-  max-width: 1320px;
+width: 90%;
+max-width: 1320px;
   height: 60px;
   margin: 12px 14px;
   display: flex;

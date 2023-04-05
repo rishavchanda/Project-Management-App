@@ -12,6 +12,7 @@ const FeaturesWrapper = styled.section`
   align-items: center;
   background-color: #181622;
   padding-bottom: 150px;
+  background: linear-gradient(343.07deg, rgba(132, 59, 206, 0.06) 5.71%, rgba(132, 59, 206, 0) 64.83%);
 `;
 
 const FeaturesTitle = styled.div`

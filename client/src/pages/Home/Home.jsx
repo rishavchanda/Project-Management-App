@@ -13,7 +13,7 @@ import SignIn from '../../components/SignIn'
 import Faq from './components/Faq'
 
 const Body = styled.div`
-    background-color: ${({ theme }) => theme.bg};
+    background: #13111C;
     display: flex;
     justify-content: center;
     overflow-x: hidden;
@@ -21,15 +21,19 @@ const Body = styled.div`
 
 const Container = styled.div`
     width: 100%;
+    background-Image: linear-gradient(38.73deg, rgba(204, 0, 187, 0.25) 0%, rgba(201, 32, 184, 0) 50%), linear-gradient(141.27deg, rgba(0, 70, 209, 0) 50%, rgba(0, 70, 209, 0.25) 100%);    
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
       padding: 0px 0px !important;
 `
 const Content = styled.div`
     width: 100%;
     height: 100%;
-    background-color: ${({ theme }) => theme.card};
+    background: #13111C;
+    display: flex;
+    flex-direction: column;
 `
 
 const Home = () => {
@@ -42,14 +46,16 @@ const Home = () => {
                 <Navbar setSignInOpen={setSignInOpen} />
                 <Hero setSignInOpen={setSignInOpen} />
                 <Content>
-                    <Features/>
+                    <Features />
                     {/* <Testimonials/> */}
-                    <Benefits/>
+                    <Benefits />
                     {/* <Faq/> */}
-                    <Team/>
-                    <About/>
+                    <Team />
+                    <About />
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <Footer />
+                    </div>
                 </Content>
-                <Footer />
                 {SignUpOpen && (
                     <SignUp setSignUpOpen={setSignUpOpen} setSignInOpen={setSignInOpen} />
                 )}
