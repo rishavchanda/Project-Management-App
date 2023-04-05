@@ -66,7 +66,6 @@ const Home = () => {
                     <Benefits />
                     {/* <Faq/> */}
                     <Team />
-                    <About />
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <Footer />
                     </div>

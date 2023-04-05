@@ -250,7 +250,7 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
     }
   };
 
-  
+
   //validate password
   const validatePassword = () => {
     if (newpassword.length < 8) {
@@ -360,57 +360,61 @@ const SignIn = ({ setSignInOpen, setSignUpOpen }) => {
 
 
   //Google SignIn
-const googleLogin = useGoogleLogin({
-  onSuccess: async (tokenResponse) => {
-    const user = await axios.get(
-      'https://www.googleapis.com/oauth2/v3/userinfo',
-      { headers: { Authorization: `Bearer ${tokenResponse.access_token}`} },
-    ).catch((err) => {
-      dispatch(loginFailure());
-      dispatch(
-        openSnackbar({
-          message: err.message,
-          severity: "error",
-        })
-      );
-    });
-
-    googleSignIn({
-      name: user.data.name,
-      email: user.data.email,
-      img: user.data.picture,
-    }).then((res) => {
-      console.log(res);
-      if (res.status === 200) {
-        dispatch(loginSuccess(res.data));
-        setSignInOpen(false);
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      const user = await axios.get(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } },
+      ).catch((err) => {
+        dispatch(loginFailure());
         dispatch(
           openSnackbar({
-            message: "Logged In Successfully",
-            severity: "success",
-          })
-        );
-      } else {
-        dispatch(loginFailure(res.data));
-        dispatch(
-          openSnackbar({
-            message: res.data.message,
+            message: err.message,
             severity: "error",
           })
         );
-      }
-    });
-  },
-  onError: errorResponse => {
-    dispatch(loginFailure());
-    dispatch(
-      openSnackbar({
-        message: errorResponse.error,
-        severity: "error",
-      })
-    );
-  },
-});
+      });
+
+      googleSignIn({
+        name: user.data.name,
+        email: user.data.email,
+        img: user.data.picture,
+      }).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          dispatch(loginSuccess(res.data));
+          setSignInOpen(false);
+          dispatch(
+            openSnackbar({
+              message: "Logged In Successfully",
+              severity: "success",
+            })
+          );
+          setLoading(false);
+        } else {
+          dispatch(loginFailure(res.data));
+          dispatch(
+            openSnackbar({
+              message: res.data.message,
+              severity: "error",
+            })
+          );
+          setLoading(false);
+        }
+      });
+    },
+    onError: errorResponse => {
+      dispatch(loginFailure());
+      setLoading(false);
+      dispatch(
+        openSnackbar({
+          message: errorResponse.error,
+          severity: "error",
+        })
+      );
+    },
+  });
 
 
   return (
@@ -434,8 +438,13 @@ const googleLogin = useGoogleLogin({
                 style={{ margin: "24px" }}
                 onClick={() => googleLogin()}
               >
-                <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
-                Sign In with Google
+                {Loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : (
+                  <>
+                    <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
+                    Sign In with Google</>
+                )}
               </OutlinedBox>
               <Divider>
                 <Line />

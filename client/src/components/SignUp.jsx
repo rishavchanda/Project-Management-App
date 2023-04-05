@@ -284,6 +284,7 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
   //Google SignIn
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      setLoading(true);
       const user = await axios.get(
         'https://www.googleapis.com/oauth2/v3/userinfo',
         { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } },
@@ -312,6 +313,8 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
               severity: "success",
             })
           );
+
+          setLoading(false);
         } else {
           dispatch(loginFailure(res.data));
           dispatch(
@@ -320,6 +323,7 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
               severity: "error",
             })
           );
+          setLoading(false);
         }
       });
     },
@@ -331,6 +335,7 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
           severity: "error",
         })
       );
+      setLoading(false);
     },
   });
 
@@ -358,8 +363,13 @@ const SignUp = ({ setSignUpOpen, setSignInOpen }) => {
                 style={{ margin: "24px" }}
                 onClick={() => googleLogin()}
               >
-                <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
-                Continue with Google
+                {Loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : (
+                  <>
+                    <GoogleIcon src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png?20210618182606" />
+                    Sign In with Google</>
+                )}
               </OutlinedBox>
               <Divider>
                 <Line />
