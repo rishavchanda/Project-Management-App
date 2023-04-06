@@ -15,14 +15,16 @@ const FooterContainer = styled.footer`
   color: ${({ theme }) => theme.text};
 `;
 
-const Logo = styled.img`
-  max-width: 100%;
+const Logo = styled.h1`
+  font-weight: 600;
+  font-size: 20px;
+  color: ${({ theme }) => theme.primary};
 `;
 
 const Nav = styled.nav`
   width: 100%;
   max-width: 800px;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: row;
   gap: 2rem;
@@ -72,7 +74,7 @@ const Copyright = styled.p`
 function Footer() {
   return (
     <FooterContainer>
-      <Logo src="company-logo.png" alt="Company Logo" />
+      <Logo>VEXA</Logo>
       <Nav>
         <NavLink href="#home">Home</NavLink>
         <NavLink href="#features">Features</NavLink>
@@ -80,13 +82,13 @@ function Footer() {
         <NavLink href="#team">Team</NavLink>
       </Nav>
       <SocialMediaIcons>
-        <SocialMediaIcon href="#"><FacebookIcon/></SocialMediaIcon>
-        <SocialMediaIcon href="#"><TwitterIcon/></SocialMediaIcon>
-        <SocialMediaIcon href="#"><LinkedInIcon/></SocialMediaIcon>
-        <SocialMediaIcon href="#"><InstagramIcon/></SocialMediaIcon>
+        <SocialMediaIcon href="#"><FacebookIcon /></SocialMediaIcon>
+        <SocialMediaIcon href="#"><TwitterIcon /></SocialMediaIcon>
+        <SocialMediaIcon href="#"><LinkedInIcon /></SocialMediaIcon>
+        <SocialMediaIcon href="#"><InstagramIcon /></SocialMediaIcon>
       </SocialMediaIcons>
       <Copyright>
-        &copy; 2023 Company Name. All rights reserved.
+        &copy; 2023 Vexa. All rights reserved.
       </Copyright>
     </FooterContainer>
   );

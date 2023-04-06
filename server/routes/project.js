@@ -1,6 +1,7 @@
 import express from "express";
 import { addProject, deleteProject, getProject, updateProject, inviteProjectMember, verifyInvitation, getProjectMembers, addWork, getWorks } from "../controllers/project.js";
 import { verifyToken } from "../middleware/verifyToken.js";
+import { localVariables } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -12,11 +13,11 @@ router.get("/:id", verifyToken, getProject)
 router.delete("/:id", verifyToken, deleteProject)
 //update a project
 router.patch("/:id", verifyToken, updateProject)
-//invite a team project
-router.post("/invite/:id", verifyToken, inviteProjectMember)
+//invite a  project
+router.post("/invite/:id", verifyToken, localVariables, inviteProjectMember)
 //verify a invite
-router.get("/invite/:projectId/:userId",verifyToken, verifyInvitation)
-//get team members
+router.get("/invite/:code", verifyInvitation)
+//get  members
 router.get("/members/:id",verifyToken, getProjectMembers)
 
 //works

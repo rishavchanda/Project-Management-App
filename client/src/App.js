@@ -53,9 +53,10 @@ function App() {
   return (
     <DndProvider backend={HTML5Backend}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        {currentUser ?
-          <Container >
-            <BrowserRouter>
+
+        <BrowserRouter>
+          {currentUser ?
+            <Container >
               {loading ? <div>Loading...</div> : <>
                 {menuOpen && <Menu setMenuOpen={setMenuOpen} setDarkMode={setDarkMode} darkMode={darkMode} setNewTeam={setNewTeam} />}
                 <Main>
@@ -80,10 +81,11 @@ function App() {
                   </Wrapper>
                 </Main>
               </>}
-            </BrowserRouter>
-          </Container>
-          : <ThemeProvider theme={darkTheme}><Home/></ThemeProvider>}
-        {open && <ToastMessage open={open} message={message} severity={severity} />}
+            </Container>
+            : <ThemeProvider theme={darkTheme}><Home /></ThemeProvider>}
+          {open && <ToastMessage open={open} message={message} severity={severity} />}
+
+        </BrowserRouter>
       </ThemeProvider>
     </DndProvider>
   );
