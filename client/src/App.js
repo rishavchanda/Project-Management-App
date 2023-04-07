@@ -24,6 +24,8 @@ import { useEffect } from 'react';
 import { getUsers } from './api';
 import { useDispatch } from 'react-redux';
 import Home from './pages/Home/Home';
+import ProjectInvite from './components/ProjectInvite';
+import TeamInvite from './components/TeamInvite';
 
 const Container = styled.div`
 height: 100vh;
@@ -85,8 +87,14 @@ function App() {
                         <Route path="teams">
                           <Route path=":id" element={<Teams />} />
                         </Route>
+                        <Route path="team/invite">
+                          <Route path=":code" element={<TeamInvite/>} />
+                        </Route>
                         <Route path="projects">
                           <Route path=":id" element={<ProjectDetails />} />
+                        </Route>
+                        <Route path="projects/invite">
+                          <Route path=":code" element={<ProjectInvite/>} />
                         </Route>
 
                         <Route path="works" element={<Works />} />
@@ -97,7 +105,22 @@ function App() {
                 </Main>
               </>}
             </Container>
-            : <ThemeProvider theme={darkTheme}><Home /></ThemeProvider>}
+            : <ThemeProvider theme={darkTheme}
+            >
+
+              <Routes>
+                <Route path="/">
+                  <Route index element={
+                    <Home />} />
+                  <Route path="team/invite">
+                    <Route path=":code" element={<TeamInvite/>} />
+                  </Route>
+                  <Route path="projects/invite">
+                    <Route path=":code" element={<ProjectInvite/>} />
+                  </Route>
+                </Route>
+              </Routes>
+            </ThemeProvider>}
           {open && <ToastMessage open={open} message={message} severity={severity} />}
 
         </BrowserRouter>
