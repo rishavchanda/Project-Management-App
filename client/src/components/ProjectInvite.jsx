@@ -39,7 +39,7 @@ const ProjectInvite = () => {
             console.log(res);
             dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
             //navigate to project page
-            navigate(`/project/${projectid}`);
+            navigate(`/projects/${projectid}`);
 
         }
         ).catch((err) => {

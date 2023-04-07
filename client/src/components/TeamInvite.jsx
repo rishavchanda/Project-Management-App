@@ -31,7 +31,7 @@ const TeamInvite = () => {
             console.log(res);
             dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
             //navigate to project page
-            navigate(`/team/${teamid}`);
+            navigate(`/teams/${teamid}`);
         }
         ).catch((err) => {
             console.log(err);

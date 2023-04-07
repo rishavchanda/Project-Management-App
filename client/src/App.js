@@ -81,8 +81,8 @@ function App() {
                   <Wrapper>
                     {newTeam && <AddNewTeam setNewTeam={setNewTeam} />}
                     <Routes>
-                      <Route exact path="/">
-                        <Route index element={<Dashboard />} />
+                      <Route >
+                        <Route exact path="/" element={<Dashboard />} />
                         <Route path="projects" element={<Projects />} />
                         <Route path="teams">
                           <Route path=":id" element={<Teams />} />
