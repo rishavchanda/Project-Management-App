@@ -279,7 +279,7 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
                       <option value="Admin">Admin</option>
                       <option value="Member">Member</option>
                       <option value="Editor">Editor</option>
-                      <option value="Guest">View Only</option>
+                      <option value="View Only">View Only</option>
                     </Select>
                   </Access>
                   <Role>

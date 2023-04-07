@@ -7,6 +7,16 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { verifyTeamInvite } from '../api';
 import { openSnackbar } from "../redux/snackbarSlice";
+import styled from 'styled-components';
+import { CircularProgress } from '@mui/material';
+
+const Joining = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 2rem;
+`;
 
 const TeamInvite = () => {
 
@@ -41,7 +51,9 @@ const TeamInvite = () => {
     }, [teamid, userid, access, role]);
 
     return (
-        <div>{code}</div>
+        <Joining>
+            <CircularProgress/>
+        </Joining>
     )
 }
 
