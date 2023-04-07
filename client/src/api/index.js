@@ -6,7 +6,6 @@ import dotenv from 'dotenv';
 //https://dull-blue-dolphin-tutu.cyclic.app
 //https://project-management-app-production-3d51.up.railway.app/api/
 //http://localhost:8700/api/
-dotenv.config();
 const API = axios.create({ baseURL: `${process.env.SERVER_URL}` }); 
 
 
