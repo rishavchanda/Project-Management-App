@@ -114,12 +114,6 @@ const TeamIcon = styled(WorkspacesRounded)`
 
 const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
 
-  //check width
-  const [width, setWidth] = useState(window.innerWidth);
-  if(width < 1100){
-    setMenuOpen(false);
-  }
-
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const logoutUser = () => {
@@ -127,7 +121,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
   };
 
   const [team, setTeams] = useState([]);
-  const {currentUser} = useSelector(state => state.user);
+  const { currentUser } = useSelector(state => state.user);
 
   const getteams = async () => {
     console.log(team);
@@ -149,15 +143,15 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
   return (
     <Container setMenuOpen={setMenuOpen}>
       <Flex>
-      <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-        <Logo>
-          <Image src={LogoIcon} />
-          VEXA
-        </Logo>
-      </Link>
-      <Close>
-      <CloseRounded onClick={()=> setMenuOpen(false)}/>
-      </Close>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Logo>
+            <Image src={LogoIcon} />
+            VEXA
+          </Logo>
+        </Link>
+        <Close>
+          <CloseRounded onClick={() => setMenuOpen(false)} />
+        </Close>
       </Flex>
       <ContainerWrapper>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
@@ -188,9 +182,9 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
         <Title>
           <Groups2Rounded /> Teams
         </Title>
-        {team.map((team,i) => (
+        {team.map((team, i) => (
           <Link
-            to = {`/teams/${team._id}`}
+            to={`/teams/${team._id}`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Item>
@@ -200,7 +194,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
           </Link>
         ))}
         <Item onClick={() => setNewTeam(true)}>
-          <Add sx={{ fontSize: "20px" }}  />
+          <Add sx={{ fontSize: "20px" }} />
           New Team
         </Item>
         <Hr />

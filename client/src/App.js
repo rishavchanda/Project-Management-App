@@ -51,6 +51,19 @@ function App() {
   const { currentUser } = useSelector(state => state.user);
 
 
+  //set the menuOpen state to false if the screen size is less than 768px
+  useEffect(() => {
+    const resize = () => {
+      if (window.innerWidth < 768) {
+        setMenuOpen(false);
+      } else {
+        setMenuOpen(true);
+      }
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, []);
 
   return (
     <DndProvider backend={HTML5Backend}>
