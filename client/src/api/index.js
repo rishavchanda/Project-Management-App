@@ -50,12 +50,12 @@ export const getProjectDetails = async (id,token) => await API.get(`/project/${i
 export const inviteProjectMembers = async (id, members,token) => await API.post(`/project/invite/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const addWorks = async (id, works,token) => await API.post(`/project/works/${id}`, works,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const getWorks = async (id,token) => await API.get(`/project/works/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
-export const verifyProjectInvite = async (code,projectid,userid,role,access) => await API.get(`/project/invite/${code}?projectid=${projectid}&userid=${userid}&role=${role}&access=${access}`,{ withCredentials: true });
+export const verifyProjectInvite = async (code,projectid,userid,access,role) => await API.get(`/project/invite/${code}?projectid=${projectid}&userid=${userid}&access=${access}&role=${role}`,{ withCredentials: true });
 
 //teams api
 export const createTeam = async (team,token) => await API.post('team/', team,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const getTeams = async (id,token) => await API.get(`/team/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const inviteTeamMembers = async (id, members,token) => await API.post(`/team/invite/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const addTeamProject = async (id, project,token) => await API.post(`/team/addProject/${id}`, project,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
-export const verifyTeamInvite = async (code,teamid,userid,role,access) => await API.get(`/team/invite/${code}?teamid=${teamid}&userid=${userid}&role=${role}&access=${access}`,{ withCredentials: true });
+export const verifyTeamInvite = async (code,teamid,userid,access,role) => await API.get(`/team/invite/${code}?teamid=${teamid}&userid=${userid}&access=${access}&role=${role}`,{ withCredentials: true });
 

@@ -81,7 +81,7 @@ function App() {
                   <Wrapper>
                     {newTeam && <AddNewTeam setNewTeam={setNewTeam} />}
                     <Routes>
-                      <Route path="/">
+                      <Route exact path="/">
                         <Route index element={<Dashboard />} />
                         <Route path="projects" element={<Projects />} />
                         <Route path="teams">
@@ -109,7 +109,7 @@ function App() {
             >
 
               <Routes>
-                <Route path="/">
+                <Route exact path="/">
                   <Route index element={
                     <Home />} />
                   <Route path="team/invite">
