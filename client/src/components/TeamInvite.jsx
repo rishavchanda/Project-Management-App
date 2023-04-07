@@ -39,9 +39,14 @@ const TeamInvite = () => {
     useEffect(() => {
         verifyTeamInvite(code, teamid, userid, access, role).then((res) => {
             console.log(res);
-            dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
-            //navigate to project page
-            navigate(`/teams/${teamid}`);
+            if(res.status === 200){
+                dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
+                //navigate to project page
+                navigate(`/teams/${teamid}`);
+            }
+            else{
+                navigate(`/`);
+            }
         }
         ).catch((err) => {
             console.log(err);

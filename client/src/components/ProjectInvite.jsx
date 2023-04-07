@@ -1,7 +1,7 @@
-import React,{useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import {
-    useParams,
+  useParams,
   useLocation
 } from "react-router-dom";
 import { useNavigate } from 'react-router-dom'
@@ -19,38 +19,43 @@ const Joining = styled.div`
 `;
 
 const ProjectInvite = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    function useQuery() {
-        const { search } = useLocation();
-      
-        return React.useMemo(() => new URLSearchParams(search), [search]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  function useQuery() {
+    const { search } = useLocation();
+
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+  let query = useQuery();
+
+  const { code } = useParams();
+  const projectid = query.get("projectid");
+  const userid = query.get("userid");
+  const access = query.get("access");
+  const role = query.get("role");
+
+  useEffect(() => {
+    verifyProjectInvite(code, projectid, userid, access, role).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
+        //navigate to project page
+        navigate(`/projects/${projectid}`);
       }
-      let query = useQuery();
+      else {
+        navigate(`/`);
+      }
 
-      const { code } = useParams();
-      const projectid = query.get("projectid");
-      const userid = query.get("userid");
-      const access = query.get("access");
-      const role = query.get("role");
-
-      useEffect(() => {
-        verifyProjectInvite(code, projectid, userid, access, role).then((res) => {
-            console.log(res);
-            dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
-            //navigate to project page
-            navigate(`/projects/${projectid}`);
-
-        }
-        ).catch((err) => {
-            console.log(err);
-            navigate(`/`);
-        }
-        )
-    }, [projectid, userid, access, role]);
+    }
+    ).catch((err) => {
+      console.log(err);
+      navigate(`/`);
+    }
+    )
+  }, [projectid, userid, access, role]);
   return (
     <Joining>
-        <CircularProgress/>
+      <CircularProgress />
     </Joining>
   )
 }

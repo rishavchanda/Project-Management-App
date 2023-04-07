@@ -21,6 +21,7 @@ import { openSnackbar } from "../redux/snackbarSlice";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { getUsers, notifications } from "../api/index";
+import {useNavigate} from 'react-router-dom';
 
 const Container = styled.div`
   flex: 1.3;
@@ -116,8 +117,10 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
 
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const logoutUser = () => {
     dispatch(logout());
+    navigate(`/`);
   };
 
   const [team, setTeams] = useState([]);

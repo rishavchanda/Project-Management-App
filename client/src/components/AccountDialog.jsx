@@ -3,6 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/userSlice";
+import {useNavigate} from 'react-router-dom';
 
 const Wrapper = styled.div`
   min-width: 200px;
@@ -72,8 +73,10 @@ const OutlinedBox = styled.div`
 
 const AccountDialog = ({ open, id, anchorEl, handleClose, currentUser }) => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const logoutUser = () => {
       dispatch(logout())
+      navigate('/');
     }
   return (
     <Popover
