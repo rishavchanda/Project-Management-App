@@ -1,10 +1,11 @@
-import React,{useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import {
     useParams,
     useLocation
 } from "react-router-dom";
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from "react-redux";
 import { verifyTeamInvite } from '../api';
 import { openSnackbar } from "../redux/snackbarSlice";
 import styled from 'styled-components';
@@ -36,15 +37,20 @@ const TeamInvite = () => {
     const access = query.get("access");
     const role = query.get("role");
 
+    const { currentUser } = useSelector((state) => state.user);
+
     useEffect(() => {
         verifyTeamInvite(code, teamid, userid, access, role).then((res) => {
             console.log(res);
-            if(res.status === 200){
+            if (res.status === 200) {
                 dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
                 //navigate to project page
-                navigate(`/teams/${teamid}`);
+                if (currentUser)
+                    navigate(`/teams/${teamid}`);
+                else
+                    navigate(`/`);
             }
-            else{
+            else {
                 navigate(`/`);
             }
         }
@@ -57,7 +63,7 @@ const TeamInvite = () => {
 
     return (
         <Joining>
-            <CircularProgress/>
+            <CircularProgress />
         </Joining>
     )
 }

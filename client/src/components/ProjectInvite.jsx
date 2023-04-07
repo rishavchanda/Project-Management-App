@@ -5,6 +5,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from "react-redux";
 import { verifyProjectInvite } from '../api';
 import { openSnackbar } from "../redux/snackbarSlice";
 import styled from 'styled-components';
@@ -34,13 +35,19 @@ const ProjectInvite = () => {
   const access = query.get("access");
   const role = query.get("role");
 
+
+  const { currentUser } = useSelector((state) => state.user);
   useEffect(() => {
     verifyProjectInvite(code, projectid, userid, access, role).then((res) => {
       console.log(res);
       if (res.status === 200) {
         dispatch(openSnackbar({ message: res.data.Message, type: "success" }));
         //navigate to project page
-        navigate(`/projects/${projectid}`);
+        if (currentUser)
+          navigate(`/projects/${projectid}`);
+        else
+          navigate(`/`);
+
       }
       else {
         navigate(`/`);
