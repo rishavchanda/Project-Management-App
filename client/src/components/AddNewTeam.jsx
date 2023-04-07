@@ -205,6 +205,46 @@ const EmailId = styled.div`
   color: ${({ theme }) => theme.textSoft + "99"};
 `;
 
+
+const Flex = styled.div`
+display: flex;
+flex-direction: row;
+gap: 2px;
+@media (max-width: 768px) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+`;
+
+const Access = styled.div`
+padding: 6px 10px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+background-color: ${({ theme }) => theme.bgDark};
+`;
+
+const Select = styled.select`
+  border: none;
+  font-size: 12px;
+  background-color: transparent;
+  outline: none;
+  color: ${({ theme }) => theme.text};
+  background-color: ${({ theme }) => theme.bgDark};
+`;
+
+const Role = styled.div`
+  background-color: ${({ theme }) => theme.bgDark};
+  border-radius: 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const InviteButton = styled.button`
   padding: 6px 14px;
   background-color: transparent;
@@ -225,10 +265,10 @@ const InviteButton = styled.button`
   }
 `;
 
-const AddNewTeam = ({ setNewTeam}) => {
+const AddNewTeam = ({ setNewTeam }) => {
   const [Loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [backDisabled,setBackDisabled] = useState(false);
+  const [backDisabled, setBackDisabled] = useState(false);
 
   const [showAddTeam, setShowAddTeam] = useState(true);
   const [showTools, setShowTools] = useState(false);
@@ -258,17 +298,24 @@ const AddNewTeam = ({ setNewTeam}) => {
   const [search, setSearch] = React.useState("");
   const [users, setUsers] = React.useState([]);
   const { currentUser } = useSelector((state) => state.user);
+  const [role, setRole] = useState("");
+  const [access, setAccess] = useState("");
   const [selectedUsers, setSelectedUsers] = React.useState([]);
-  const [inputs, setInputs] = useState({name: "", desc: ""});
+  const [inputs, setInputs] = useState({ name: "", desc: "" });
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
-    searchUsers(search,token)
+    searchUsers(e.target.value, token)
       .then((res) => {
-        setUsers(res.data);
+        if (res.status === 200) {
+          setUsers(res.data);
+        }
+        else {
+          setUsers([]);
+        }
       })
       .catch((err) => {
-        console.log(err);
+        setUsers([]);
       });
   };
 
@@ -280,7 +327,13 @@ const AddNewTeam = ({ setNewTeam}) => {
     };
     if (selectedUsers.find((u) => u.id === User.id)) {
     } else {
-      setSelectedUsers([...selectedUsers, User]);
+      setSelectedUsers([...selectedUsers, {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: role,
+        access: access,
+      }]);
       setUsers([]);
       setSearch("");
     }
@@ -295,7 +348,7 @@ const AddNewTeam = ({ setNewTeam}) => {
     let teamInvite = true;
     if (teamInvite) {
       selectedUsers.map((user) => {
-        inviteTeamMembers(id, user,token)
+        inviteTeamMembers(id, user, token)
           .then((res) => {
             console.log(res);
             dispatch(
@@ -311,9 +364,9 @@ const AddNewTeam = ({ setNewTeam}) => {
       });
     } else {
       selectedUsers.map((user) => {
-        inviteTeamMembers(id, user,token)
+        inviteTeamMembers(id, user, token)
           .then((res) => {
-            console.log(res);dispatch(
+            console.log(res); dispatch(
               openSnackbar({
                 message: `Invitation sent to ${user.name}`,
                 type: "success",
@@ -321,7 +374,7 @@ const AddNewTeam = ({ setNewTeam}) => {
             );
           })
           .catch((err) => {
-            console.log(err);dispatch(
+            console.log(err); dispatch(
               openSnackbar({
                 message: `Invitation cant be sent to ${user.name}`,
                 type: "error",
@@ -371,7 +424,7 @@ const AddNewTeam = ({ setNewTeam}) => {
       ...inputs,
       tools: tools,
     };
-    createTeam(Team,token)
+    createTeam(Team, token)
       .then((res) => {
         // get the id from res and invite members function call
         handleInviteAll(res.data._id);
@@ -399,9 +452,9 @@ const AddNewTeam = ({ setNewTeam}) => {
   };
 
   useEffect(() => {
-    if(inputs.name === "" || inputs.desc === ""){
+    if (inputs.name === "" || inputs.desc === "") {
       setDisabled(true)
-    }else{
+    } else {
       setDisabled(false)
     }
   }, [inputs])
@@ -461,7 +514,7 @@ const AddNewTeam = ({ setNewTeam}) => {
                 button={true}
                 activeButton={!disabled}
                 style={{ marginTop: "22px", marginBottom: "18px" }}
-                onClick={() => {!disabled && goToAddTools()}}
+                onClick={() => { !disabled && goToAddTools() }}
               >
                 Next
               </OutlinedBox>
@@ -493,7 +546,7 @@ const AddNewTeam = ({ setNewTeam}) => {
                   button={true}
                   activeButton={false}
                   style={{ marginTop: "18px", width: "100%" }}
-                  onClick={() => {!backDisabled && goToAddTeam()}}
+                  onClick={() => { !backDisabled && goToAddTeam() }}
                 >
                   Back
                 </OutlinedBox>
@@ -542,6 +595,21 @@ const AddNewTeam = ({ setNewTeam}) => {
                           <EmailId>{user.email}</EmailId>
                         </Details>
                       </UserData>
+                      <Flex>
+                        <Access>
+                          <Select name="Role" onChange={(e) => setAccess(e.target.value)}>
+                            <option value="" selected disabled hidden>Access</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Member">Member</option>
+                            <option value="Editor">Editor</option>
+                            <option value="Guest">View Only</option>
+                          </Select>
+                        </Access>
+                        <Role>
+                          <Input style={{ width: '70px', fontSize: '12px', padding: '8px 10px' }} type="text" placeholder="Role" onChange={(e) => setRole(e.target.value)} />
+                        </Role>
+
+                      </Flex>
                       <InviteButton onClick={() => handleSelect(user)}>
                         Add
                       </InviteButton>
@@ -567,6 +635,16 @@ const AddNewTeam = ({ setNewTeam}) => {
                           <EmailId>{user.email}</EmailId>
                         </Details>
                       </UserData>
+                      <Flex>
+                        <Access>
+                          {user.access}
+                        </Access>
+                        <Role style={{padding: '6px 10px'}}>
+                          {user.role}
+                        </Role>
+
+                      </Flex>
+
                       <InviteButton onClick={() => handleRemove(user)}>
                         Remove
                       </InviteButton>
@@ -580,7 +658,7 @@ const AddNewTeam = ({ setNewTeam}) => {
                   button={true}
                   activeButton={false}
                   style={{ marginTop: "18px", width: "100%" }}
-                  onClick={() => {!backDisabled && goToAddTools()}}
+                  onClick={() => { !backDisabled && goToAddTools() }}
                 >
                   Back
                 </OutlinedBox>
@@ -588,7 +666,7 @@ const AddNewTeam = ({ setNewTeam}) => {
                   button={true}
                   activeButton={!disabled}
                   style={{ marginTop: "18px", width: "100%" }}
-                  onClick={() => {!disabled && CreateTeam()}}
+                  onClick={() => { !disabled && CreateTeam() }}
                 >
                   {Loading ? (
                     <CircularProgress color="inherit" size={20} />

@@ -228,11 +228,16 @@ export const findUserByEmail = async (req, res, next) => {
   const users = [];
   try {
     await User.findOne({ email: { $regex: email, $options: "i" } }).then((user) => {
-      users.push(user)
+      if(user!=null)
+      {
+        users.push(user);
+        res.status(200).json(users);
+      }else{
+        res.status(201).json({message:"No user found"});
+      }
     }).catch((err) => {
       next(err)
     })
-    res.status(200).json(users);
   } catch (err) {
     next(err);
   }

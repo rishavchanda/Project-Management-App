@@ -115,7 +115,7 @@ const Body = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: start;
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1000px) {
     flex-direction: column;
     gap: 10px;
   }

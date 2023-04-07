@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import {
   Add,
   Dashboard,
+  CloseRounded,
   Groups2Rounded,
   HubRounded,
   Logout,
@@ -32,6 +33,15 @@ const Container = styled.div`
   position: sticky;
   top: 0;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.04);
+  transition: 0.3s ease-in-out;
+  @media (max-width: 1100px) {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    max-width: 250px;
+    left: ${({ setMenuOpen }) => (setMenuOpen ? "0" : "-100%")};
+    transition: 0.3s ease-in-out;
+  }
 `;
 const ContainerWrapper = styled.div`
   height: 90%;
@@ -41,16 +51,29 @@ const ContainerWrapper = styled.div`
 const Space = styled.div`
   height: 50px;
 `;
+const Flex = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px;
+`;
+
 const Logo = styled.div`
   color: ${({ theme }) => theme.text};
   display: flex;
   align-items: center;
   gap: 2px;
   font-weight: bold;
-  margin-bottom: 16px;
   font-size: 20px;
-  padding: 22px 0px 0px 24px;
 `;
+
+const Close = styled.div`
+  display: none;
+  @media (max-width: 1100px) {
+    display: block;
+  }
+`;
+
 const Image = styled.img`
   height: 22px;
 `;
@@ -91,6 +114,12 @@ const TeamIcon = styled(WorkspacesRounded)`
 
 const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
 
+  //check width
+  const [width, setWidth] = useState(window.innerWidth);
+  if(width < 1100){
+    setMenuOpen(false);
+  }
+
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const logoutUser = () => {
@@ -119,12 +148,17 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
 
   return (
     <Container setMenuOpen={setMenuOpen}>
+      <Flex>
       <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
         <Logo>
           <Image src={LogoIcon} />
           VEXA
         </Logo>
       </Link>
+      <Close>
+      <CloseRounded onClick={()=> setMenuOpen(false)}/>
+      </Close>
+      </Flex>
       <ContainerWrapper>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           <Item>

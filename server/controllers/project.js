@@ -164,7 +164,7 @@ export const inviteProjectMember = async (req, res, next) => {
         const mailOptions = {
           from: process.env.EMAIL,
           to: req.body.email,
-          subject: `Invitation to join project ${project.name}`,
+          subject: `Invitation to join project ${project.title}`,
           html: mailBody
         };
         transporter.sendMail(mailOptions, (err, data) => {

@@ -26,8 +26,10 @@ import { useDispatch } from 'react-redux';
 import Home from './pages/Home/Home';
 
 const Container = styled.div`
+height: 100vh;
   display: flex; 
   background-color: ${({ theme }) => theme.bg};
+  overflow-x: hidden;
 `;
 
 const Main = styled.div`

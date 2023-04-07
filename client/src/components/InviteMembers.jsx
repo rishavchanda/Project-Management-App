@@ -166,6 +166,7 @@ const InviteButton = styled.button`
 const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
   const [search, setSearch] = React.useState("");
   const [users, setUsers] = React.useState([]);
+  const [message, setMessage] = React.useState("");
   const { currentUser } = useSelector((state) => state.user);
   const token = localStorage.getItem("token");
 
@@ -175,12 +176,20 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
-    searchUsers(search, token)
+    searchUsers(e.target.value, token)
       .then((res) => {
-        setUsers(res.data);
+        if (res.status === 200) {
+          setUsers(res.data);
+          setMessage("");
+        }
+        else {
+          setUsers([]);
+          setMessage(res.status);
+        }
       })
       .catch((err) => {
-        console.log(err);
+        setUsers([]);
+        setMessage(err.message);
       });
   };
 
@@ -198,7 +207,8 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
       inviteTeamMembers(id, User, token)
         .then((res) => {
           console.log(res);
-          dispatch(openSnackbar({ message: `Invitation sent to ${user.name}`, type: "success" }));
+          if (res.status === 200)
+            dispatch(openSnackbar({ message: `Invitation sent to ${user.name}`, type: "success" }));
           setLoading(false);
         })
         .catch((err) => {
@@ -210,8 +220,8 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
       console.log("project");
       inviteProjectMembers(id, User, token)
         .then((res) => {
-          if(res.status === 200)
-          dispatch(openSnackbar({ message: "Invitation sent to email id", type: "success" }));
+          if (res.status === 200)
+            dispatch(openSnackbar({ message: `Invitation sent to ${user.name}`, type: "success" }));
           setLoading(false);
         })
         .catch((err) => {
@@ -249,12 +259,13 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
               style={{ marginRight: "12px", marginLeft: "12px" }}
             />
           </Search>
+          {message && <div style={{ color: "red" }}>{message}</div>}
           <UsersList>
             {users.map((user) => (
-              <MemberCard>
+              <MemberCard key={user._id}>
                 <UserData>
                   <Avatar sx={{ width: "34px", height: "34px" }} src={user.img}>
-                    {user.name.charAt(0)}
+                    {user.name[0]}
                   </Avatar>
                   <Details>
                     <Name>{user.name}</Name>
@@ -277,16 +288,17 @@ const InviteMembers = ({ setInvitePopup, id, teamInvite }) => {
 
                 </Flex>
                 <InviteButton onClick={() => handleInvite(user)}>
-                {Loading ? (
-                  <CircularProgress color="inherit" size={20} />
-                ) : (<>
-                  <SendRounded sx={{ fontSize: "13px" }} />
-                  Invite</>
-                )}
+                  {Loading ? (
+                    <CircularProgress color="inherit" size={20} />
+                  ) : (<>
+                    <SendRounded sx={{ fontSize: "13px" }} />
+                    Invite</>
+                  )}
                 </InviteButton>
               </MemberCard>
             ))}
           </UsersList>
+
         </Wrapper>
       </Container>
     </Modal>
