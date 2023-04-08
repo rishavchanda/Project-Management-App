@@ -7,15 +7,16 @@ import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import MenuIcon from "@mui/icons-material/Menu";
 import { IconButton } from "@mui/material";
-import { NotificationsRounded } from "@mui/icons-material";
+import { Forum, NotificationsRounded } from "@mui/icons-material";
 import Badge from "@mui/material/Badge";
 import { useDispatch } from "react-redux";
 import Avatar from "@mui/material/Avatar";
 import AccountDialog from "./AccountDialog";
 import NotificationDialog from "./NotificationDialog";
-import { getUsers,notifications } from "../api/index";
+import { getUsers, notifications } from "../api/index";
 import { openSnackbar } from "../redux/snackbarSlice";
 import { logout } from "../redux/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   position: sticky;
@@ -26,6 +27,10 @@ const Container = styled.div`
   z-index: 99;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.06);
   background-color: ${({ theme }) => theme.bgLighter};
+  @media screen and (max-width: 480px) {
+    margin: 0px 0px 0px 0px;
+    height: 60px;
+  }
 `;
 const Wrapper = styled.div`
   height: 100%;
@@ -97,7 +102,12 @@ const User = styled.div`
   font-size: 18px;
   padding: 0px 8px;
   color: ${({ theme }) => theme.text};
+  @media (max-width: 800px) {
+    gap: 2px;
+}
 `;
+
+
 
 const Navbar = ({ menuOpen, setMenuOpen }) => {
   const [SignUpOpen, setSignUpOpen] = useState(false);
@@ -107,20 +117,20 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
   const token = localStorage.getItem("token");
-  
+  const navigate = useNavigate();
+
   const [notification, setNotification] = useState([]);
   useEffect(() => {
     getUsers(token).then((res) => {
       setUsers(res.data);
-    }).catch((err) => { 
-      if(err.response.status === 401)
-      {
+    }).catch((err) => {
+      if (err.response.status === 401) {
         dispatch(logout())
       }
     });
   }, [dispatch]);
 
-  
+
   const getNotifications = async () => {
     try {
       notifications(token).then((res) => {
@@ -134,7 +144,7 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
 
   useEffect(() => {
     getNotifications();
-  },[]);
+  }, []);
 
   useEffect(() => {
     if (!currentUser && !SignUpOpen) {
@@ -190,6 +200,11 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
           <User>
             {currentUser ? (
               <>
+                <IcoButton aria-describedby={id} onClick={() => navigate('/chats')}>
+                  <Badge color="primary">
+                    <Forum />
+                  </Badge>
+                </IcoButton>
                 <IcoButton aria-describedby={id} onClick={notificationClick}>
                   <Badge badgeContent={notification.length} color="primary">
                     <NotificationsRounded />
@@ -240,7 +255,7 @@ const Navbar = ({ menuOpen, setMenuOpen }) => {
           id={id2}
           handleClose={notificationClose}
           currentUser={currentUser}
-          notification = {notification}
+          notification={notification}
         />
       )}
     </>

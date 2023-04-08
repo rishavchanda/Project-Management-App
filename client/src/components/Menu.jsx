@@ -12,6 +12,7 @@ import {
   Logout,
   StreamRounded,
   WorkspacesRounded,
+  Public,
 } from "@mui/icons-material";
 import { tagColors } from "../data/data";
 import LogoIcon from "../Images/Logo.svg";
@@ -180,6 +181,15 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
           <Item>
             <StreamRounded />
             Your Works
+          </Item>
+        </Link>
+        <Link
+          to="community"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Item>
+            <Public/>
+            Community
           </Item>
         </Link>
         <Hr />

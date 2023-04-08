@@ -18,12 +18,14 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import ProjectDetails from './pages/ProjectDetails';
 import Teams from './pages/Teams';
 import ToastMessage from './components/ToastMessage';
+import Community from './pages/Community';
 import { useSelector } from "react-redux";
 import AddNewTeam from './components/AddNewTeam';
 import { useEffect } from 'react';
 import { getUsers } from './api';
 import { useDispatch } from 'react-redux';
 import Home from './pages/Home/Home';
+import Chats from './pages/Chats';
 import ProjectInvite from './components/ProjectInvite';
 import TeamInvite from './components/TeamInvite';
 
@@ -31,6 +33,7 @@ const Container = styled.div`
 height: 100vh;
   display: flex; 
   background-color: ${({ theme }) => theme.bg};
+  color: ${({ theme }) => theme.text};
   overflow-x: hidden;
 `;
 
@@ -98,6 +101,8 @@ function App() {
                         </Route>
 
                         <Route path="works" element={<Works />} />
+                        <Route path="community" element={<Community/>} />
+                        <Route path="chats" element={<Chats/>} />
                         <Route path="*" element={<div>Not Found</div>} />
                       </Route>
                     </Routes>

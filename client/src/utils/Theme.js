@@ -13,7 +13,10 @@ export const darkTheme = {
     lightAdd:"99",
     yellow: "#fccf03",
     green: "#03fc45",
-    pink: "#fc036b"
+    pink: "#fc036b",
+    recieve_message: "#1a1826",
+    chat_background: "#100f17",
+    send_message: "#4f34ad",
 
     /*Colors
 Swatch 1
@@ -43,4 +46,8 @@ export const lightTheme = {
     soft2:"#757575",
     card: "#FFFFFF",
     lightAdd:"",
+    recieve_message: "#ffffff",
+    chat_background: "#e3e3e3",
+    send_message: "#4f34ad",
+    send_message_text_color: "#ffffff"
   }
