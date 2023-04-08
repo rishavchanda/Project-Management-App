@@ -16,7 +16,7 @@ import Avatar from "@mui/material/Avatar";
 import { openSnackbar } from "../redux/snackbarSlice";
 import { useDispatch } from "react-redux";
 import InviteMembers from "../components/InviteMembers";
-import { getTeams} from "../api/index";
+import { getTeams } from "../api/index";
 import AddNewProject from "../components/AddNewProject";
 
 const Container = styled.div`
@@ -38,6 +38,12 @@ const Column = styled.div`
   }
 `;
 
+const Flex = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+`;
 const Title = styled.div`
   width: 100%;
   @media screen and (max-width: 480px) {
@@ -244,12 +250,12 @@ const Teams = () => {
   const [invitePopup, setInvitePopup] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const [newProject, setNewProject] = useState(false);
-  const[user,setUser]=useState(JSON.parse(localStorage.getItem('user')))
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
 
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getTeamDetails = async () => {
-    getTeams(id,token)
+    getTeams(id, token)
       .then((res) => {
         setItems(res.data);
         setProjects(res.data.projects);
@@ -275,14 +281,20 @@ const Teams = () => {
 
   return (
     <Container>
-      { newProject && <AddNewProject setNewProject={setNewProject} teamId={id} teamProject={true}/>}
+      {newProject && <AddNewProject setNewProject={setNewProject} teamId={id} teamProject={true} />}
       {loading ? (
         <>Loading</>
       ) : (
         <>
           <Header>
-            <Title>{item.name}</Title>
-            <Desc>{item.desc}</Desc>
+            <Flex>
+              {item.img!=="" &&
+              <Avatar sx={{ width: "50px", height: "50px" }} src={item.img} />}
+              <div>
+                <Title>{item.name}</Title>
+                <Desc>{item.desc}</Desc>
+              </div>
+            </Flex>
             <Members>
               <AvatarGroup>
                 {item.members.map((member) => (
@@ -295,7 +307,7 @@ const Teams = () => {
                   </Avatar>
                 ))}
               </AvatarGroup>
-              <InviteButton onClick={ () => setInvitePopup(true)}>
+              <InviteButton onClick={() => setInvitePopup(true)}>
                 <PersonAdd sx={{ fontSize: "16px" }} />
                 Invite
               </InviteButton>

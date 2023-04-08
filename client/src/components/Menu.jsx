@@ -22,6 +22,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { getUsers, notifications } from "../api/index";
 import {useNavigate} from 'react-router-dom';
+import { Avatar } from "@mui/material";
 
 const Container = styled.div`
   flex: 1.3;
@@ -191,7 +192,9 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Item>
-              <TeamIcon sx={{ fontSize: "18px" }} tagColor={tagColors[i]} />
+              {team.img!==""?
+              <Avatar sx={{ width: "28px", height: "28px" }} src={team.img}>{team.name[0]}</Avatar>:
+              <TeamIcon sx={{ fontSize: "18px" }} tagColor={tagColors[i]} />}
               {team.name}
             </Item>
           </Link>

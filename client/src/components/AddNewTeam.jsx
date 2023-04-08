@@ -24,6 +24,7 @@ import {
 } from "../api/index";
 import { openSnackbar } from "../redux/snackbarSlice";
 import { useDispatch } from "react-redux";
+import ImageSelector from "./ImageSelector";
 
 const Container = styled.div`
   width: 100%;
@@ -301,7 +302,7 @@ const AddNewTeam = ({ setNewTeam }) => {
   const [role, setRole] = useState("");
   const [access, setAccess] = useState("");
   const [selectedUsers, setSelectedUsers] = React.useState([]);
-  const [inputs, setInputs] = useState({ name: "", desc: "" });
+  const [inputs, setInputs] = useState({img:"", name: "", desc: "" });
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
@@ -482,6 +483,7 @@ const AddNewTeam = ({ setNewTeam }) => {
           {showAddTeam && (
             <>
               <Label>Team Details :</Label>
+              <ImageSelector inputs={inputs} setInputs={setInputs} style={{ marginTop: "12px" }}/>
               <OutlinedBox style={{ marginTop: "12px" }}>
                 <TextInput
                   placeholder="Team Name (Required)*"

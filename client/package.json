@@ -25,6 +25,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-file-image-to-base64": "^1.0.1",
     "react-otp-input": "^3.0.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.2",
