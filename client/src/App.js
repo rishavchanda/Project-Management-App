@@ -70,6 +70,9 @@ function App() {
     return () => window.removeEventListener("resize", resize);
   }, []);
 
+  useEffect(() => {
+  }, []);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>

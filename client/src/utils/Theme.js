@@ -17,6 +17,7 @@ export const darkTheme = {
     recieve_message: "#1a1826",
     chat_background: "#100f17",
     send_message: "#4f34ad",
+    contact_background: "#151a21",
 
     /*Colors
 Swatch 1
@@ -47,7 +48,9 @@ export const lightTheme = {
     card: "#FFFFFF",
     lightAdd:"",
     recieve_message: "#ffffff",
-    chat_background: "#e3e3e3",
+    chat_background: "#f5f5fc",
     send_message: "#4f34ad",
-    send_message_text_color: "#ffffff"
+    send_message_text_color: "#ffffff",
+    contact_background: "#ffffff",
+
   }

@@ -1,28 +1,18 @@
-import { AttachFile, DoneAll, Send, Telegram } from '@mui/icons-material'
+import { ArrowBack, AttachFile, DoneAll, Send, Telegram } from '@mui/icons-material'
 import { Avatar, IconButton } from '@mui/material'
-import React,{useRef,useEffect} from 'react'
+import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
-const Wrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    background-color: ${({ theme }) => theme.bg};
-`
 const Container = styled.div`
     margin: 12px 0px;
     display: flex;
     max-width: 800px;
     width: 100%;
+    height: 100%;
     flex-direction: column;
-    height: 85vh;
     background-color:  ${({ theme }) => theme.card};
-    border-radius: 10px;
-    @media (max-width: 800px) {
-        height: 82vh;
-        border-radius: 0;
-    }
+    border-radius: 0px 10px 10px 0px;
+
 `
 
 const TopBar = styled.div`
@@ -30,9 +20,10 @@ const TopBar = styled.div`
     border-bottom: 1px solid ${({ theme }) => theme.soft};
     display: flex;
     align-items: center;
-    padding: 0 16px;
+    padding: 0px 16px;
     @media (max-width: 800px) {
         height: 60px;
+        padding: 0px 16px 0px 6px;
     }
 `
 
@@ -47,13 +38,13 @@ const Chat = styled.div`
 
 `
 
-const RecievedMessage = styled.div`
+const RecievedMessage = styled.p`
     margin: 16px 16px 0 16px;
     padding: 12px 16px;
     background-color: ${({ theme }) => theme.recieve_message};
     border-radius: 12px;
     color: ${({ theme }) => theme.text};
-    font-size: 16px;
+    font-size: 14px;
     max-width: 70%;
     width: fit-content;
     box-shadow: 0 0 6px rgba(0,0,0,0.2);
@@ -70,13 +61,13 @@ const RecievedMessage = styled.div`
     }
 `
 
-const SentMessage = styled.div`
+const SentMessage = styled.p`
     margin: 16px 16px 0 auto;
     padding: 12px 16px;
     background-color: ${({ theme }) => theme.send_message};
     border-radius: 12px 0px 12px 12px;
     color: ${({ theme }) => theme.send_message_text_color};
-    font-size: 16px;
+    font-size: 14px;
     max-width: 70%;
     width: fit-content;
     box-shadow: 0 0 6px rgba(0,0,0,0.4);
@@ -167,48 +158,61 @@ const Message = styled.input`
 `;
 
 
-const ChatContainer = () => {
+const ChatContainer = ({showChat,setShowChat}) => {
+
+    //get the window size and hide the chat container for mobile and dislay it for desktop
+    const [width, setWidth] = React.useState(window.innerWidth)
+    const breakpoint = 768
+
+    useEffect(() => {
+        const handleWindowResize = () => setWidth(window.innerWidth)
+        window.addEventListener("resize", handleWindowResize)
+        return () => window.removeEventListener("resize", handleWindowResize)
+    }, [])
 
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
     useEffect(scrollToBottom);
-    return (
-        <Wrapper>
-            <Container>
-                <TopBar>
-                    <Avatar sx={{ width: "46px", height: '46px' }} />
-                    <Profile>
-                        <Name>John Doe</Name>
-                        <Status>Online</Status>
-                    </Profile>
-                </TopBar>
-                <Chat>
-                    <RecievedMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y   5y54ey5yy  y53y5e4ye45</RecievedMessage>
-                    <Time message="recieved"><b>Today at 12:40</b> <DoneAll sx={{ width: '18px', height: '18px' }} /></Time>
-                    <SentMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y  5y54ey5yy  y53y5e4ye45</SentMessage>
-                    <Time message="sent"><b>Today at 12:40</b><DoneAll /></Time>
-                    <RecievedMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y   5y54ey5yy  y53y5e4ye45</RecievedMessage>
-                    <Time message="recieved"><b>Today at 12:40</b> <DoneAll /></Time>
-                    <SentMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y  5y54ey5yy  y53y5e4ye45</SentMessage>
-                    <Time message="sent"><b>Today at 12:40</b><DoneAll /></Time>
 
-                    <div ref={messagesEndRef} />
-                </Chat>
-                <SendMessage>
-                    <IconButton style={{ color: 'inherit', marginBottom: '6px' }}>
-                        <AttachFile sx={{ height: '28px', width: '28px' }} />
-                    </IconButton>
-                    <MessageBox>
-                        <Message placeholder="Type a message" />
-                    </MessageBox>
-                    <IconButton style={{ color: 'inherit', marginBottom: '6px' }}>
-                        <Telegram sx={{ height: '30px', width: '30px' }} />
-                    </IconButton>
-                </SendMessage>
-            </Container>
-        </Wrapper>
+    return (
+        <Container>
+            <TopBar>
+                {width < breakpoint &&
+                <IconButton style={{ color: 'inherit' }} onClick={()=>setShowChat(false)}>
+                    <ArrowBack sx={{ width: "24px", height: '24px' }} />
+                </IconButton>}
+                <Avatar sx={{ width: "46px", height: '46px' }} />
+                <Profile>
+                    <Name>John Doe</Name>
+                    <Status>Online</Status>
+                </Profile>
+            </TopBar>
+            <Chat>
+                <RecievedMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y   5y54ey5yy  y53y5e4ye45</RecievedMessage>
+                <Time message="recieved"><b>Today at 12:40</b> <DoneAll sx={{ width: '18px', height: '18px' }} /></Time>
+                <SentMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y  5y54ey5yy  y53y5e4ye45</SentMessage>
+                <Time message="sent"><b>Today at 12:40</b><DoneAll /></Time>
+                <RecievedMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y   5y54ey5yy  y53y5e4ye45</RecievedMessage>
+                <Time message="recieved"><b>Today at 12:40</b> <DoneAll /></Time>
+                <SentMessage>hola fghtdfhhhhhhhhhhhhhhhh trw twr twrtrw44t rwerewty rewyetryetyetyetryery ertyetyertyertyetry e5ty5et444444444444y  5y54ey5yy  y53y5e4ye45</SentMessage>
+                <Time message="sent"><b>Today at 12:40</b><DoneAll /></Time>
+
+                <div ref={messagesEndRef} />
+            </Chat>
+            <SendMessage>
+                <IconButton style={{ color: 'inherit', marginBottom: '6px' }}>
+                    <AttachFile sx={{ height: '28px', width: '28px' }} />
+                </IconButton>
+                <MessageBox>
+                    <Message placeholder="Type a message" />
+                </MessageBox>
+                <IconButton style={{ color: 'inherit', marginBottom: '6px' }}>
+                    <Telegram sx={{ height: '30px', width: '30px' }} />
+                </IconButton>
+            </SendMessage>
+        </Container>
     )
 }
 
