@@ -42,7 +42,7 @@ export const signup = async (req, res, next) => {
         newUser.save().then((user) => {
 
             // create jwt token
-            const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
+            const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "9999 years" });
             res.status(200).json({ token, user });
         }).catch((err) => {
             next(err);
@@ -67,7 +67,7 @@ export const signin = async (req, res, next) => {
         }
 
         // create jwt token
-        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
+        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "9999 years" });
         res.status(200).json({ token, user });
 
     } catch (err) {
@@ -85,13 +85,13 @@ export const googleAuthSignIn = async (req, res, next) => {
             try {
                 const user = new User({ ...req.body, googleSignIn: true });
                 await user.save();
-                const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
+                const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "9999 years" });
                 res.status(200).json({ token, user: user });
             } catch (err) {
                 next(err);
             }
         } else if (user.googleSignIn) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "24h" });
+            const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "9999 years" });
             res.status(200).json({ token, user });
         } else if (user.googleSignIn === false) {
             return next(createError(201, "User already exists with this email can't do google auth"));
