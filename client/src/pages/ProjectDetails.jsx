@@ -26,6 +26,7 @@ import { getProjectDetails, getWorks } from "../api/index";
 import InviteMembers from "../components/InviteMembers";
 import AddWork from "../components/AddWork";
 import WorkDetails from "../components/WorkDetails";
+import UpdateProject from "../components/UpdateProject";
 
 const Container = styled.div`
   padding: 14px 14px;
@@ -325,8 +326,12 @@ const ProjectDetails = () => {
 
   const [openWork, setOpenWork] = useState(false);
 
+
+  //hooks for updates
+  //use state enum to check for which updation
+  const [openUpdate,setOpenUpdate] = useState({state: false, type: "all", data: item});
+
   const token = localStorage.getItem("token");
-  console.log(token)
   const dispatch = useDispatch();
   const getproject = async () => {
     getProjectDetails(id,token)
@@ -381,9 +386,12 @@ const ProjectDetails = () => {
   console.log(item);
   const [alignment, setAlignment] = React.useState(true);
 
+
+
   return (
     <Container>
       {openWork && <WorkDetails setOpenWork={setOpenWork} work={currentWork} />}
+      {openUpdate.state && <UpdateProject openUpdate={openUpdate} setOpenUpdate={setOpenUpdate} type={openUpdate.type} />}
       {loading ? (
         <>Loading</>
       ) : (
@@ -494,7 +502,7 @@ const ProjectDetails = () => {
                 <SubCardTop>
                   <SubCardsTitle>Members</SubCardsTitle>
                   <IcoBtn>
-                    <Edit sx={{ fontSize: "16px" }} />
+                    <Edit sx={{ fontSize: "16px" }} onClick={() => setOpenUpdate({state: true,type:'member',data: item})}/>
                   </IcoBtn>
                 </SubCardTop>
                 {members.map((member) => (

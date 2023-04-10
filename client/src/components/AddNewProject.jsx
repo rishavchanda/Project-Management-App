@@ -337,6 +337,8 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
         access: access,
       }]);
       setUsers([]);
+      setAccess("");
+      setRole("");
       setSearch("");
     }
   };
@@ -639,7 +641,7 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
                             <option value="Admin">Admin</option>
                             <option value="Member">Member</option>
                             <option value="Editor">Editor</option>
-                            <option value="Guest">View Only</option>
+                            <option value="View Only">View Only</option>
                           </Select>
                         </Access>
                         <Role>
@@ -647,7 +649,7 @@ const AddNewProject = ({ setNewProject, teamId, teamProject }) => {
                         </Role>
 
                       </Flex>
-                      <InviteButton onClick={() => handleSelect(user)}>
+                      <InviteButton onClick={() => {access!=="" && role!=="" && handleSelect(user)}}>
                         Add
                       </InviteButton>
                     </MemberCard>
