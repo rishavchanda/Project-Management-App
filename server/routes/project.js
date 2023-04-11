@@ -1,5 +1,5 @@
 import express from "express";
-import { addProject, deleteProject, getProject, updateProject, inviteProjectMember, verifyInvitation, getProjectMembers, addWork, getWorks } from "../controllers/project.js";
+import { addProject, deleteProject, getProject, updateProject,removeMember, inviteProjectMember, verifyInvitation, getProjectMembers, addWork, getWorks, updateMembers } from "../controllers/project.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { localVariables } from "../middleware/auth.js";
 
@@ -13,6 +13,11 @@ router.get("/:id", verifyToken, getProject)
 router.delete("/:id", verifyToken, deleteProject)
 //update a project
 router.patch("/:id", verifyToken, updateProject)
+//update a project member
+router.patch("/member/:id", verifyToken, updateMembers)
+//remove a project member
+router.patch("/member/remove/:id", verifyToken, removeMember)
+
 //invite a  project
 router.post("/invite/:id", verifyToken, localVariables, inviteProjectMember)
 //verify a invite

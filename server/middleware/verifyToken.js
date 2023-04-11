@@ -3,7 +3,6 @@ import { createError } from "../error.js";
 
 export const verifyToken = async (req, res, next) => {
   try {
-    
     if (!req.headers.authorization)  return next(createError(401, "You are not authenticated!"));
     // Get the token from the header
     const token = req.headers.authorization.split(" ")[1];

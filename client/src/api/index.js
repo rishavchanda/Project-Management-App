@@ -5,7 +5,7 @@ import jwt_decode from 'jwt-decode';
 //https://dull-blue-dolphin-tutu.cyclic.app
 //https://project-management-app-production-3d51.up.railway.app/api/
 //http://localhost:8700/api/
-const API = axios.create({ baseURL: `https://project-management-app-production-3d51.up.railway.app/api/` }); 
+const API = axios.create({ baseURL: `http://localhost:8700/api/` }); 
 
 
 
@@ -51,7 +51,10 @@ export const inviteProjectMembers = async (id, members,token) => await API.post(
 export const addWorks = async (id, works,token) => await API.post(`/project/works/${id}`, works,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const getWorks = async (id,token) => await API.get(`/project/works/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const verifyProjectInvite = async (code,projectid,userid,access,role) => await API.get(`/project/invite/${code}?projectid=${projectid}&userid=${userid}&access=${access}&role=${role}`,{ withCredentials: true });
-
+export const updateProject = async (id, project,token) => await API.patch(`/project/${id}`, project,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+export const deleteProject = async (id,token) => await API.delete(`/project/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+export const updateMembers = async (id, members,token) => await API.patch(`/project/member/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+export const removeMembers = async (id, members,token) => await API.patch(`/project/member/remove/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 //teams api
 export const createTeam = async (team,token) => await API.post('team/', team,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const getTeams = async (id,token) => await API.get(`/team/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });

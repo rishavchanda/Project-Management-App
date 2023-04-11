@@ -86,7 +86,7 @@ export const updateProject = async (req, res, next) => {
     const project = await Project.findById(req.params.id);
     if (!project) return next(createError(404, "project not found!"));
     for (let i = 0; i < project.members.length; i++) {
-      if (project.members[i].id === req.user.id) {
+      if (project.members[i].id.toString() === req.user.id.toString()) {
         if (project.members[i].access === "Owner" || project.members[i].access === "Admin" || project.members[i].access === "Editor") {
           const updatedproject = await Project.findByIdAndUpdate(
             req.params.id,
@@ -95,7 +95,103 @@ export const updateProject = async (req, res, next) => {
             },
             { new: true }
           );
-          res.status(200).json(updatedproject);
+          res.status(200).json({ message: "Project has been updated..." });
+        } else {
+          return next(createError(403, "You are not allowed to update this project!"));
+        }
+      } else {
+        return next(createError(403, "You can update only if you are a member of this project!"));
+      }
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateMembers = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return next(createError(404, "project not found!"));
+    for (let i = 0; i < project.members.length; i++) {
+      if (project.members[i].id.toString() === req.user.id.toString()) {
+        if (project.members[i].access === "Owner" || project.members[i].access === "Admin" || project.members[i].access === "Editor") {
+          //update single member inside members array
+          const updatedproject = await Project.findByIdAndUpdate(
+            req.params.id,
+            {
+              $set: {
+                "members.$[elem].access": req.body.access,
+                "members.$[elem].role": req.body.role,
+              },
+            },
+            {
+              arrayFilters: [{ "elem.id": req.body.id }],
+              new: true,
+            }
+          );
+          res.status(200).json({ message: "Member has been updated..." });
+        } else {
+          return next(createError(403, "You are not allowed to update this project!"));
+        }
+      } else {
+        return next(createError(403, "You can update only if you are a member of this project!"));
+      }
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const removeMember = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return next(createError(404, "project not found!"));
+    for (let i = 0; i < project.members.length; i++) {
+      if (project.members[i].id.toString() === req.user.id.toString()) {
+        if (project.members[i].access === "Owner" || project.members[i].access === "Admin" || project.members[i].access === "Editor") {
+          console.log(req.body.id);
+          //update single member inside members array
+          //remove the project from the user
+          const user = User.findById(req.body.id);
+          if (!user) return next(createError(404, "User not found!"));
+          const index = user.projects.findIndex((id) => String(id) === req.params.id);
+          if (index === -1) return next(createError(404, "Project not found!"));
+          user.projects = user.projects.filter((id) => String(id) !== req.params.id);
+          // await User.findOneAndUpdate(
+          //   req.body.id,
+          //   {
+          //     $pull: {
+          //       projects: req.params.id
+          //     }
+          //   },
+          //   {
+          //     new: true,
+          //   }
+          // ); 
+
+          await Project.findByIdAndUpdate(
+            req.params.id,
+            {
+              $pull: {
+                //remove the meber with the id
+                members: { id: req.body.id }
+              }
+            },
+            {
+              new: true,
+            }
+          );
+
+          await User.findByIdAndUpdate(
+            req.body.id,
+            user,
+            {
+              new: true,
+            }
+          );
+
+          res.status(200).json({ message: "Member has been removed..." });
+
         } else {
           return next(createError(403, "You are not allowed to update this project!"));
         }
@@ -109,14 +205,13 @@ export const updateProject = async (req, res, next) => {
 };
 
 
-
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD
   },
   port: 465,
   host: 'smtp.gmail.com'

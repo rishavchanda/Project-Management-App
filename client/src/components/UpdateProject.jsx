@@ -22,6 +22,9 @@ import {
     searchUsers,
     createProject,
     addTeamProject,
+    updateProject,
+    updateMembers,
+    removeMembers,
 } from "../api/index";
 import { openSnackbar } from "../redux/snackbarSlice";
 import { useDispatch } from "react-redux";
@@ -270,7 +273,7 @@ const InviteButton = styled.button`
   }
 `;
 
-const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
+const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
     console.log(openUpdate);
     const [Loading, setLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
@@ -423,7 +426,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
                     setProjectTools((prev) => {
                         return prev.map((item, i) => {
                             if (i === index) {
-                                return { ...item, link: inputTool.link };
+                                return { ...item, link: inputTool.link, icon: inputTool.icon, name: inputTool.name };
                             }
                             return item;
                         });
@@ -442,7 +445,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
         setProjectTools(data);
     };
 
-    const CreateProject = () => {
+    const UpdateProject = () => {
         setLoading(true);
         setDisabled(true);
         setBackDisabled(true);
@@ -452,59 +455,36 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
             ...inputs,
             tools: tools,
         };
-        if (teamProject) {
-            addTeamProject(teamId, project, token)
-                .then((res) => {
-                    // get the id from res and invite members function call
-                    handleInviteAll(res.data._id);
-                    setLoading(false);
-                    setOpenUpdate({ ...openUpdate, state: false });
-                    dispatch(
-                        openSnackbar({
-                            message: "Project created successfully",
-                            type: "success",
-                        })
-                    );
-                })
-                .catch((err) => {
-                    console.log(err);
-                    setLoading(false);
-                    setDisabled(false);
-                    setBackDisabled(false);
-                    dispatch(
-                        openSnackbar({
-                            message: "Something went wrong",
-                            type: "error",
-                        })
-                    );
-                });
-        } else {
-            createProject(project, token)
-                .then((res) => {
-                    // get the id from res and invite members function call
-                    handleInviteAll(res.data._id);
-                    setLoading(false);
-                    setOpenUpdate({ ...openUpdate, state: false });
-                    dispatch(
-                        openSnackbar({
-                            message: "Project created successfully",
-                            type: "success",
-                        })
-                    );
-                })
-                .catch((err) => {
-                    console.log(err);
-                    setLoading(false);
-                    setDisabled(false);
-                    setBackDisabled(false);
-                    dispatch(
-                        openSnackbar({
-                            message: "Something went wrong",
-                            type: "error",
-                        })
-                    );
-                });
-        }
+        //remove the members from project
+        delete project.members;
+        delete project.id;
+
+        updateProject(inputs.id, project, token)
+            .then((res) => {
+                // get the id from res and invite members function call
+                handleInviteAll(res.data._id);
+                setLoading(false);
+                setOpenUpdate({ ...openUpdate, state: false });
+                dispatch(
+                    openSnackbar({
+                        message: "Project updated successfully",
+                        type: "success",
+                    })
+                );
+            })
+            .catch((err) => {
+                console.log(err);
+                setLoading(false);
+                setDisabled(false);
+                setBackDisabled(false);
+                dispatch(
+                    openSnackbar({
+                        message: err.message,
+                        type: "error",
+                    })
+                );
+            });
+
     };
 
     useEffect(() => {
@@ -515,11 +495,71 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
         }
     }, [inputs]);
 
-    const updateProjectMembers = (member,id) => {
-        console.log(member,id);
+    const updateProjectMembers = (member, id) => {
+
+        //SET THE MEMBERS ID TO ONLY ID STRING REMOVE THE OTHER PROPERTIES
+
+        var updatedMember = {
+            id: member.id._id,
+            role: member.role,
+            access: member.access,
+        }
+
+        updateMembers(inputs.id, updatedMember, token)
+            .then((res) => {
+                setLoading(false);
+                setOpenUpdate({ ...openUpdate, state: false });
+                dispatch(
+                    openSnackbar({
+                        message: "Project updated successfully",
+                        type: "success",
+                    })
+                );
+            })
+            .catch((err) => {
+                console.log(err);
+                setLoading(false);
+                setDisabled(false);
+                setBackDisabled(false);
+                dispatch(
+                    openSnackbar({
+                        message: err.message,
+                        type: "error",
+                    })
+                );
+            });
+
     }
-    const removeProjectMembers = (member,id) => {
-        console.log(member,id);
+    const removeProjectMembers = (member, id) => {
+        var updatedMember = {
+            id: member.id._id,
+            role: member.role,
+            access: member.access,
+        }
+        console.log(updatedMember);
+        removeMembers(id, updatedMember, token)
+            .then((res) => {
+                setLoading(false);
+                setOpenUpdate({ ...openUpdate, state: false });
+                dispatch(
+                    openSnackbar({
+                        message: "Project updated successfully",
+                        type: "success",
+                    })
+                );
+            })
+            .catch((err) => {
+                console.log(err);
+                setLoading(false);
+                setDisabled(false);
+                setBackDisabled(false);
+                dispatch(
+                    openSnackbar({
+                        message: err.message,
+                        type: "error",
+                    })
+                );
+            });
     }
 
     const dispatch = useDispatch();
@@ -669,6 +709,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
                                                         )
                                                     })}>
                                                         <option value={user.access} selected disabled hidden>{user.access}</option>
+                                                        <option value="Owner">Owner</option>
                                                         <option value="Admin">Admin</option>
                                                         <option value="Member">Member</option>
                                                         <option value="Editor">Editor</option>
@@ -695,13 +736,13 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
                                                 </Role>
 
                                             </Flex>
-                                            <div style={{display: 'flex', flexDirection: 'column', gap: '2px'}}>
-                                            <InviteButton onClick={() => updateProjectMembers(user,inputs.id)}>
-                                                Update
-                                            </InviteButton>
-                                            <InviteButton onClick={() => removeProjectMembers(user,inputs.id)}>
-                                                Remove
-                                            </InviteButton>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                <InviteButton onClick={() => updateProjectMembers(user, inputs.id)}>
+                                                    Update
+                                                </InviteButton>
+                                                <InviteButton onClick={() => removeProjectMembers(user, inputs.id)}>
+                                                    Remove
+                                                </InviteButton>
                                             </div>
                                         </MemberCard>
                                     ))}
@@ -748,7 +789,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
                                                 </Role>
 
                                             </Flex>
-                                            <InviteButton onClick={() => {access!=="" && role!=="" && handleSelect(user)}}>
+                                            <InviteButton onClick={() => { access !== "" && role !== "" && handleSelect(user) }}>
                                                 Add
                                             </InviteButton>
                                         </MemberCard>
@@ -806,7 +847,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate, teamId, teamProject }) => {
                                     activeButton={!disabled}
                                     style={{ marginTop: "18px", width: "100%" }}
                                     onClick={() => {
-                                        !disabled && CreateProject();
+                                        !disabled && UpdateProject();
                                     }}
                                 >
                                     {Loading ? (

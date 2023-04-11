@@ -376,7 +376,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     getproject();
-  }, []);
+  }, [openWork,openUpdate]);
 
   useEffect(() => {
     getProjectWorks(id);
