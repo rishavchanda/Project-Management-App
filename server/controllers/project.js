@@ -149,25 +149,6 @@ export const removeMember = async (req, res, next) => {
     for (let i = 0; i < project.members.length; i++) {
       if (project.members[i].id.toString() === req.user.id.toString()) {
         if (project.members[i].access === "Owner" || project.members[i].access === "Admin" || project.members[i].access === "Editor") {
-          console.log(req.body.id);
-          //update single member inside members array
-          //remove the project from the user
-          const user = User.findById(req.body.id);
-          if (!user) return next(createError(404, "User not found!"));
-          const index = user.projects.findIndex((id) => String(id) === req.params.id);
-          if (index === -1) return next(createError(404, "Project not found!"));
-          user.projects = user.projects.filter((id) => String(id) !== req.params.id);
-          // await User.findOneAndUpdate(
-          //   req.body.id,
-          //   {
-          //     $pull: {
-          //       projects: req.params.id
-          //     }
-          //   },
-          //   {
-          //     new: true,
-          //   }
-          // ); 
 
           await Project.findByIdAndUpdate(
             req.params.id,
@@ -180,17 +161,26 @@ export const removeMember = async (req, res, next) => {
             {
               new: true,
             }
-          );
+          )
+            .exec();
 
           await User.findByIdAndUpdate(
             req.body.id,
-            user,
+            {
+              $pull: {
+                projects: req.params.id,
+              }
+            },
             {
               new: true,
             }
-          );
+          ).exec()
+            .then((user) => {
+              res.status(200).json({ message: "Member has been removed..." });
 
-          res.status(200).json({ message: "Member has been removed..." });
+            }).catch((err) => {
+              console.log(err);
+            })
 
         } else {
           return next(createError(403, "You are not allowed to update this project!"));

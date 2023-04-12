@@ -504,7 +504,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
             role: member.role,
             access: member.access,
         }
-
+        setLoading(true);
         updateMembers(inputs.id, updatedMember, token)
             .then((res) => {
                 setLoading(false);
@@ -536,8 +536,8 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
             role: member.role,
             access: member.access,
         }
-        console.log(updatedMember);
-        removeMembers(id, updatedMember, token)
+        setLoading(true);
+        removeMembers(inputs.id, updatedMember, token)
             .then((res) => {
                 setLoading(false);
                 setOpenUpdate({ ...openUpdate, state: false });
@@ -738,10 +738,16 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                             </Flex>
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                                 <InviteButton onClick={() => updateProjectMembers(user, inputs.id)}>
-                                                    Update
+                                                    {Loading ? (
+                                                        <CircularProgress color="inherit" size={20} />
+                                                    ) : (
+                                                        "Update")}
                                                 </InviteButton>
                                                 <InviteButton onClick={() => removeProjectMembers(user, inputs.id)}>
-                                                    Remove
+                                                {Loading ? (
+                                                        <CircularProgress color="inherit" size={20} />
+                                                    ) : (
+                                                        "Remove")}
                                                 </InviteButton>
                                             </div>
                                         </MemberCard>
