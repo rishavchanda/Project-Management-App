@@ -17,20 +17,17 @@ import { tools } from "../data/data";
 import { Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
 import {
-    inviteTeamMembers,
     inviteProjectMembers,
+    inviteTeamMembers,
     searchUsers,
-    createProject,
-    addTeamProject,
-    updateProject,
-    updateMembers,
-    removeMembers,
+    createTeam,
+    updateTeamMembers,
+    removeTeamMembers,
+    updateTeam
 } from "../api/index";
 import { openSnackbar } from "../redux/snackbarSlice";
 import { useDispatch } from "react-redux";
 import ImageSelector from "./ImageSelector";
-
-
 
 const Container = styled.div`
   width: 100%;
@@ -210,8 +207,8 @@ const EmailId = styled.div`
   font-size: 10px;
   font-weight: 400;
   color: ${({ theme }) => theme.textSoft + "99"};
-  line-break: anywhere;
 `;
+
 
 const Flex = styled.div`
 display: flex;
@@ -252,7 +249,6 @@ const Role = styled.div`
   justify-content: center;
 `;
 
-
 const InviteButton = styled.button`
   padding: 6px 14px;
   background-color: transparent;
@@ -273,30 +269,30 @@ const InviteButton = styled.button`
   }
 `;
 
-const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
-    console.log(openUpdate);
+const UpdateTeam = ({ openUpdate, setOpenUpdate }) => {
     const [Loading, setLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const [backDisabled, setBackDisabled] = useState(false);
 
-    const [showAddProject, setShowAddProject] = useState(true);
+    const [showAddTeam, setShowAddTeam] = useState(true);
     const [showTools, setShowTools] = useState(false);
     const [showAddMember, setShowAddMember] = useState(false);
+    const token = localStorage.getItem("token");
 
-    const goToAddProject = () => {
-        setShowAddProject(true);
+    const goToAddTeam = () => {
+        setShowAddTeam(true);
         setShowTools(false);
         setShowAddMember(false);
     };
 
     const goToAddTools = () => {
-        setShowAddProject(false);
+        setShowAddTeam(false);
         setShowAddMember(false);
         setShowTools(true);
     };
 
     const goToAddMember = () => {
-        setShowAddProject(false);
+        setShowAddTeam(false);
         setShowTools(false);
         setShowAddMember(true);
     };
@@ -309,9 +305,8 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
     const [role, setRole] = useState("");
     const [access, setAccess] = useState("");
     const [selectedUsers, setSelectedUsers] = React.useState([]);
-    const [inputs, setInputs] = useState({ id: openUpdate.data._id, img: openUpdate.data.img, title: openUpdate.data.title, desc: openUpdate.data.desc, tags: openUpdate.data.tags, tools: openUpdate.data.tools, members: openUpdate.data.members });
+    const [inputs, setInputs] = useState({ id: openUpdate.data._id, img: openUpdate.data.img, name: openUpdate.data.name, desc: openUpdate.data.desc, tags: openUpdate.data.tags, tools: openUpdate.data.tools, members: openUpdate.data.members });
 
-    const token = localStorage.getItem("token");
     const handleSearch = async (e) => {
         setSearch(e.target.value);
         searchUsers(e.target.value, token)
@@ -344,8 +339,6 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                 access: access,
             }]);
             setUsers([]);
-            setAccess("");
-            setRole("");
             setSearch("");
         }
     };
@@ -356,7 +349,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
     };
 
     const handleInviteAll = (id) => {
-        let teamInvite = false;
+        let teamInvite = true;
         if (teamInvite) {
             selectedUsers.map((user) => {
                 inviteTeamMembers(id, user, token)
@@ -375,10 +368,9 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
             });
         } else {
             selectedUsers.map((user) => {
-                inviteProjectMembers(id, user, token)
+                inviteTeamMembers(id, user, token)
                     .then((res) => {
-                        console.log(res);
-                        dispatch(
+                        console.log(res); dispatch(
                             openSnackbar({
                                 message: `Invitation sent to ${user.name}`,
                                 type: "success",
@@ -386,8 +378,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                         );
                     })
                     .catch((err) => {
-                        console.log(err);
-                        dispatch(
+                        console.log(err); dispatch(
                             openSnackbar({
                                 message: `Invitation cant be sent to ${user.name}`,
                                 type: "error",
@@ -410,7 +401,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
 
     //add tools part
 
-    const [projectTools, setProjectTools] = useState([
+    const [TeamTools, setTeamTools] = useState([
         { name: "", icon: "", link: "" },
         { name: "", icon: "", link: "" },
         { name: "", icon: "", link: "" },
@@ -418,12 +409,13 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
         { name: "", icon: "", link: "" },
         { name: "", icon: "", link: "" },
     ]);
+
     //from the tools array in input fields find the name and check it with tools array and and at that index add the link for that tool
     useEffect(() => {
         tools.map((tool, index) => {
             inputs.tools.map((inputTool) => {
                 if (tool.name === inputTool.name) {
-                    setProjectTools((prev) => {
+                    setTeamTools((prev) => {
                         return prev.map((item, i) => {
                             if (i === index) {
                                 return { ...item, link: inputTool.link, icon: inputTool.icon, name: inputTool.name };
@@ -437,29 +429,29 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
     }, []);
 
     const handleToolschange = (index, event, icon) => {
-        let data = [...projectTools];
+        let data = [...TeamTools];
         //add it to input fields
         data[index].name = event.target.name;
         data[index].icon = icon;
         data[index].link = event.target.value;
-        setProjectTools(data);
+        setTeamTools(data);
     };
 
-    const UpdateProject = () => {
+    const updateTeamData = () => {
         setLoading(true);
         setDisabled(true);
         setBackDisabled(true);
-        //remove the empty link objects of project tools
-        const tools = projectTools.filter((tool) => tool.link !== "");
-        const project = {
+        //remove the empty link objects of Team tools
+        const tools = TeamTools.filter((tool) => tool.link !== "");
+        const Team = {
             ...inputs,
             tools: tools,
         };
         //remove the members from project
-        delete project.members;
-        delete project.id;
+        delete Team.members;
+        delete Team.id;
 
-        updateProject(inputs.id, project, token)
+        updateTeam(inputs.id, Team, token)
             .then((res) => {
                 // get the id from res and invite members function call
                 //handleInviteAll(res.data._id);
@@ -467,7 +459,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                 setOpenUpdate({ ...openUpdate, state: false });
                 dispatch(
                     openSnackbar({
-                        message: "Project updated successfully",
+                        message: "Team updated successfully",
                         type: "success",
                     })
                 );
@@ -484,18 +476,18 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                     })
                 );
             });
-
     };
 
     useEffect(() => {
-        if (inputs.title === "" || inputs.desc === "") {
-            setDisabled(true);
+        if (inputs.name === "" || inputs.desc === "") {
+            setDisabled(true)
         } else {
-            setDisabled(false);
+            setDisabled(false)
         }
-    }, [inputs]);
+    }, [inputs])
 
-    const updateProjectMembers = (member, id) => {
+
+    const updateteamMembers = (member, id) => {
 
         //SET THE MEMBERS ID TO ONLY ID STRING REMOVE THE OTHER PROPERTIES
 
@@ -504,14 +496,15 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
             role: member.role,
             access: member.access,
         }
+        console.log(updatedMember)
         setLoading(true);
-        updateMembers(inputs.id, updatedMember, token)
+        updateTeamMembers(inputs.id, updatedMember, token)
             .then((res) => {
                 setLoading(false);
                 setOpenUpdate({ ...openUpdate, state: false });
                 dispatch(
                     openSnackbar({
-                        message: "Project updated successfully",
+                        message: "Team updated successfully",
                         type: "success",
                     })
                 );
@@ -530,20 +523,20 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
             });
 
     }
-    const removeProjectMembers = (member, id) => {
+    const removeteamMembers = (member, id) => {
         var updatedMember = {
             id: member.id._id,
             role: member.role,
             access: member.access,
         }
         setLoading(true);
-        removeMembers(inputs.id, updatedMember, token)
+        removeTeamMembers(inputs.id, updatedMember, token)
             .then((res) => {
                 setLoading(false);
                 setOpenUpdate({ ...openUpdate, state: false });
                 dispatch(
                     openSnackbar({
-                        message: "Project updated successfully",
+                        message: "Team updated successfully",
                         type: "success",
                     })
                 );
@@ -561,6 +554,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                 );
             });
     }
+
 
     const dispatch = useDispatch();
 
@@ -580,18 +574,18 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                     >
                         <CloseRounded style={{ color: "inherit" }} />
                     </IconButton>
-                    <Title>Update Project</Title>
+                    <Title>Update Team</Title>
 
-                    {showAddProject && (
+                    {showAddTeam && (
                         <>
-                            <Label>Project Details :</Label>
+                            <Label>Team Details :</Label>
                             <ImageSelector inputs={inputs} setInputs={setInputs} style={{ marginTop: "12px" }} />
                             <OutlinedBox style={{ marginTop: "12px" }}>
                                 <TextInput
-                                    placeholder="Title (Required)*"
+                                    placeholder="Team Name (Required)*"
                                     type="text"
-                                    name="title"
-                                    value={inputs.title}
+                                    name="name"
+                                    value={inputs.name}
                                     onChange={handleChange}
                                 />
                             </OutlinedBox>
@@ -618,9 +612,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                 button={true}
                                 activeButton={!disabled}
                                 style={{ marginTop: "22px", marginBottom: "18px" }}
-                                onClick={() => {
-                                    !disabled && goToAddTools();
-                                }}
+                                onClick={() => { !disabled && goToAddTools() }}
                             >
                                 Next
                             </OutlinedBox>
@@ -638,7 +630,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                             name={tool.name}
                                             placeholder={`${tool.name} Link`}
                                             type="text"
-                                            value={projectTools[index].link}
+                                            value={TeamTools[index].link}
                                             onChange={(event) =>
                                                 handleToolschange(index, event, tool.icon)
                                             }
@@ -652,9 +644,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                     button={true}
                                     activeButton={false}
                                     style={{ marginTop: "18px", width: "100%" }}
-                                    onClick={() => {
-                                        !backDisabled && goToAddProject();
-                                    }}
+                                    onClick={() => { !backDisabled && goToAddTeam() }}
                                 >
                                     Back
                                 </OutlinedBox>
@@ -675,6 +665,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                     {showAddMember && (
                         <>
                             <Label>Update Members :</Label>
+
                             <AddMember>
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '12px', marginTop: '6px' }}>Previous Members</div>
                                 <UsersList>
@@ -737,14 +728,14 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
 
                                             </Flex>
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                                <InviteButton onClick={() => updateProjectMembers(user, inputs.id)}>
+                                                <InviteButton onClick={() => updateteamMembers(user, inputs.id)}>
                                                     {Loading ? (
                                                         <CircularProgress color="inherit" size={20} />
                                                     ) : (
                                                         "Update")}
                                                 </InviteButton>
-                                                <InviteButton onClick={() => removeProjectMembers(user, inputs.id)}>
-                                                {Loading ? (
+                                                <InviteButton onClick={() => removeteamMembers(user, inputs.id)}>
+                                                    {Loading ? (
                                                         <CircularProgress color="inherit" size={20} />
                                                     ) : (
                                                         "Remove")}
@@ -753,7 +744,6 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                         </MemberCard>
                                     ))}
                                 </UsersList>
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '12px' }}>Add new Members</div>
                                 <Search>
                                     <Input
                                         placeholder="Search by email..."
@@ -795,7 +785,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                                 </Role>
 
                                             </Flex>
-                                            <InviteButton onClick={() => { access !== "" && role !== "" && handleSelect(user) }}>
+                                            <InviteButton onClick={() => handleSelect(user)}>
                                                 Add
                                             </InviteButton>
                                         </MemberCard>
@@ -829,6 +819,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                                 </Role>
 
                                             </Flex>
+
                                             <InviteButton onClick={() => handleRemove(user)}>
                                                 Remove
                                             </InviteButton>
@@ -842,9 +833,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                     button={true}
                                     activeButton={false}
                                     style={{ marginTop: "18px", width: "100%" }}
-                                    onClick={() => {
-                                        !backDisabled && goToAddTools();
-                                    }}
+                                    onClick={() => { !backDisabled && goToAddTools() }}
                                 >
                                     Back
                                 </OutlinedBox>
@@ -852,14 +841,12 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                     button={true}
                                     activeButton={!disabled}
                                     style={{ marginTop: "18px", width: "100%" }}
-                                    onClick={() => {
-                                        !disabled && UpdateProject();
-                                    }}
+                                    onClick={() => { !disabled && updateTeamData() }}
                                 >
                                     {Loading ? (
                                         <CircularProgress color="inherit" size={20} />
                                     ) : (
-                                        "Update Project"
+                                        "Update Team"
                                     )}
                                 </OutlinedBox>
                             </ButtonContainer>
@@ -869,6 +856,6 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
             </Container>
         </Modal>
     );
-}
+};
 
-export default UpdateProject
+export default UpdateTeam;

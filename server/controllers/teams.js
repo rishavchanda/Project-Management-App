@@ -39,7 +39,7 @@ export const deleteTeam = async (req, res, next) => {
         const Team = await Teams.findById(req.params.id);
         if (!Team) return next(createError(404, "Team not found!"));
         for (let i = 0; i < Team.members.length; i++) {
-            if (Team.members[i].id === req.user.id) {
+            if (Team.members[i].id.toString() === req.user.id) {
                 if (Team.members[i].access === "Owner") {
                     await Team.delete();
                     User.findByIdAndUpdate(req.user.id, { $pull: { teams: req.params.id } }, { new: true }, (err, doc) => {
@@ -67,11 +67,10 @@ export const getTeam = async (req, res, next) => {
                 select: "_id name email",
             }
         });
-        res.status(200).json(team);
-        var verified = true
+        var verified = false
         await Promise.all(
             team.members.map(async (Member) => {
-                if (Member.id._id === req.user.id)
+                if (Member.id.id === req.user.id)
                     verified = true
             })).then(() => {
                 if (verified) {
@@ -90,8 +89,11 @@ export const updateTeam = async (req, res, next) => {
     try {
         const Team = await Teams.findById(req.params.id);
         if (!Team) return next(createError(404, "Teams not found!"));
+        console.log(Team.members.length)
         for (let i = 0; i < Team.members.length; i++) {
-            if (Team.members[i].id === req.user.id) {
+            console.log(Team.members[i].id.toString())
+            console.log(req.user.id)
+            if (Team.members[i].id.toString() === req.user.id) {
                 if (Team.members[i].access === "Owner" || Team.members[i].access === "Admin" || Team.members[i].access === "Editor") {
                     const updatedTeam = await Teams.findByIdAndUpdate(
                         req.params.id,
@@ -104,14 +106,87 @@ export const updateTeam = async (req, res, next) => {
                 } else {
                     return next(createError(403, "You are not allowed to update this Teams!"));
                 }
-            } else {
-                return next(createError(403, "You can update only if you are a member of this Teams!"));
             }
         }
+        return next(createError(403, "You can update only if you are a member of this Teams!"));
+
     } catch (err) {
         next(err);
     }
 };
+
+export const updateMembers = async (req, res, next) => {
+    try {
+        const Team = await Teams.findById(req.params.id);
+        if (!Team) return next(createError(404, "Teams not found!"));
+        for (let i = 0; i < Team.members.length; i++) {
+            if (Team.members[i].id.toString() === req.user.id) {
+                if (Team.members[i].access === "Owner" || Team.members[i].access === "Admin" || Team.members[i].access === "Editor") {
+                    //update single member inside members array
+                    await Teams.findByIdAndUpdate(
+                        req.params.id,
+                        {
+                            $set: {
+                                "members.$[elem].access": req.body.access,
+                                "members.$[elem].role": req.body.role,
+                            },
+                        },
+                        {
+                            arrayFilters: [{ "elem.id": req.body.id }],
+                            new: true,
+                        }
+                    );
+                    res.status(200).json({ message: "Member has been updated..." });
+                } else {
+                    return next(createError(403, "You are not allowed to update this Teams!"));
+                }
+            }
+
+        }
+        return next(createError(403, "You can update only if you are a member of this Teams!"));
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+export const removeMember = async (req, res, next) => {
+    try {
+        const Team = await Teams.findById(req.params.id);
+        if (!Team) return next(createError(404, "Teams not found!"));
+        for (let i = 0; i < Team.members.length; i++) {
+            console.log(Team.members.length, Team.members[i].id.toString(), req.user.id)
+            if (Team.members[i].id.toString() === req.user.id) {
+                if (Team.members[i].access === "Owner" || Team.members[i].access === "Admin" || Team.members[i].access === "Editor") {
+                    await Teams.findByIdAndUpdate(
+                        req.params.id,
+                        {
+                            $pull: { members: { id: req.body.id } },
+                        },
+                        {
+                            new: true,
+                        }
+                    ).exec();
+
+                    await User.findByIdAndUpdate(req.body.id, { $pull: { teams: req.params.id } }, { new: true }).exec().then(() => {
+
+                    res.status(200).json({ message: "Member has been removed..." });
+                }).catch((err) => {
+                    next(err);
+                });
+
+                } else {
+                    return next(createError(403, "You are not allowed to update this Teams!"));
+                }
+            }
+        }
+        return next(createError(403, "You can update only if you are a member of this Teams!"));
+
+    } catch (err) {
+        next(err);
+    }
+};
+
 
 
 export const addTeamProject = async (req, res, next) => {
@@ -230,7 +305,7 @@ export const verifyInvitationTeam = async (req, res, next) => {
                 return next(createError(404, "User not found"));
             }
             for (let i = 0; i < team.members.length; i++) {
-                if (team.members[i].id === user.id) {
+                if (team.members[i].id.toString() === user.id) {
                     return next(createError(403, "You are already a member of this team!"));
                 }
             }

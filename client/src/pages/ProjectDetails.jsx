@@ -381,9 +381,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     getProjectWorks(id);
   }, [created]);
-  // check user role and access
-
-  console.log(item);
+  
   const [alignment, setAlignment] = React.useState(true);
 
 

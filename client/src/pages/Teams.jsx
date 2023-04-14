@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import InviteMembers from "../components/InviteMembers";
 import { getTeams } from "../api/index";
 import AddNewProject from "../components/AddNewProject";
+import UpdateTeam from "../components/UpdateTeam";
 
 const Container = styled.div`
   padding: 14px 14px;
@@ -252,6 +253,12 @@ const Teams = () => {
   const [newProject, setNewProject] = useState(false);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
 
+
+  //hooks for updates
+  //use state enum to check for which updation
+  const [openUpdate,setOpenUpdate] = useState({state: false, type: "all", data: item});
+
+
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getTeamDetails = async () => {
@@ -276,12 +283,13 @@ const Teams = () => {
     window.scrollTo(0, 0);
     getTeamDetails();
     setUser(JSON.parse(localStorage.getItem('user')))
-  }, [id, currentUser, newProject]);
+  }, [id, currentUser, newProject, openUpdate]);
 
 
   return (
     <Container>
       {newProject && <AddNewProject setNewProject={setNewProject} teamId={id} teamProject={true} />}
+      {openUpdate.state && <UpdateTeam openUpdate={openUpdate} setOpenUpdate={setOpenUpdate} type={openUpdate.type} />}
       {loading ? (
         <>Loading</>
       ) : (
@@ -389,7 +397,7 @@ const Teams = () => {
               <SubCards>
                 <SubCardTop>
                   <SubCardsTitle>Members</SubCardsTitle>
-                  <IcoBtn>
+                  <IcoBtn onClick={() => setOpenUpdate({state: true,type:'member',data: item})}>
                     <Edit sx={{ fontSize: "16px" }} />
                   </IcoBtn>
                 </SubCardTop>

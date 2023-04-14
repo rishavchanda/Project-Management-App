@@ -99,10 +99,9 @@ export const updateProject = async (req, res, next) => {
         } else {
           return next(createError(403, "You are not allowed to update this project!"));
         }
-      } else {
-        return next(createError(403, "You can update only if you are a member of this project!"));
       }
     }
+    return next(createError(403, "You can update only if you are a member of this project!"));
   } catch (err) {
     next(err);
   }
@@ -133,10 +132,10 @@ export const updateMembers = async (req, res, next) => {
         } else {
           return next(createError(403, "You are not allowed to update this project!"));
         }
-      } else {
-        return next(createError(403, "You can update only if you are a member of this project!"));
       }
     }
+    return next(createError(403, "You can update only if you are a member of this project!"));
+  
   } catch (err) {
     next(err);
   }
@@ -185,10 +184,10 @@ export const removeMember = async (req, res, next) => {
         } else {
           return next(createError(403, "You are not allowed to update this project!"));
         }
-      } else {
-        return next(createError(403, "You can update only if you are a member of this project!"));
       }
     }
+    return next(createError(403, "You can update only if you are a member of this project!"));
+  
   } catch (err) {
     next(err);
   }

@@ -55,10 +55,15 @@ export const updateProject = async (id, project,token) => await API.patch(`/proj
 export const deleteProject = async (id,token) => await API.delete(`/project/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const updateMembers = async (id, members,token) => await API.patch(`/project/member/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const removeMembers = async (id, members,token) => await API.patch(`/project/member/remove/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+
+
 //teams api
 export const createTeam = async (team,token) => await API.post('team/', team,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const getTeams = async (id,token) => await API.get(`/team/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const inviteTeamMembers = async (id, members,token) => await API.post(`/team/invite/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const addTeamProject = async (id, project,token) => await API.post(`/team/addProject/${id}`, project,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
 export const verifyTeamInvite = async (code,teamid,userid,access,role) => await API.get(`/team/invite/${code}?teamid=${teamid}&userid=${userid}&access=${access}&role=${role}`,{ withCredentials: true });
-
+export const updateTeam = async (id, team,token) => await API.patch(`/team/${id}`, team,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+export const deleteTeam = async (id,token) => await API.delete(`/team/${id}`,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+export const updateTeamMembers = async (id, members,token) => await API.patch(`/team/member/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
+export const removeTeamMembers = async (id, members,token) => await API.patch(`/team/member/remove/${id}`, members,{ headers: { "Authorization" : `Bearer ${token}` }},{ withCredentials: true });
