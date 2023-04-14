@@ -132,6 +132,15 @@ const InviteButton = styled.button`
   }
 `;
 
+const FLexDispay = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: bottom;
+  gap: 10px;
+  justify-content: space-between;
+  
+`;
+
 const Hr = styled.hr`
   margin: 18px 0px;
   border: 0.5px solid ${({ theme }) => theme.soft + "99"};
@@ -177,18 +186,14 @@ const ToggleButton = styled.div`
   }}
   ${(props) => {
     if (props.alignment && props.button == "row") {
-      return `border-radius: 5px 0px 0px 5px; border: 2px solid ${
-        props.theme.primary
-      }; color: ${props.theme.primary}; background-color: ${
-        props.theme.primary + "11"
-      };`;
+      return `border-radius: 5px 0px 0px 5px; border: 2px solid ${props.theme.primary
+        }; color: ${props.theme.primary}; background-color: ${props.theme.primary + "11"
+        };`;
     }
     if (!props.alignment && props.button == "col") {
-      return `border-radius: 0px 5px 5px 0px; border: 2px solid ${
-        props.theme.primary
-      }; color: ${props.theme.primary}; background-color: ${
-        props.theme.primary + "11"
-      };`;
+      return `border-radius: 0px 5px 5px 0px; border: 2px solid ${props.theme.primary
+        }; color: ${props.theme.primary}; background-color: ${props.theme.primary + "11"
+        };`;
     }
   }}
 `;
@@ -329,12 +334,12 @@ const ProjectDetails = () => {
 
   //hooks for updates
   //use state enum to check for which updation
-  const [openUpdate,setOpenUpdate] = useState({state: false, type: "all", data: item});
+  const [openUpdate, setOpenUpdate] = useState({ state: false, type: "all", data: item });
 
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getproject = async () => {
-    getProjectDetails(id,token)
+    getProjectDetails(id, token)
       .then((res) => {
         setItems(res.data);
         setMembers(res.data.members);
@@ -353,7 +358,7 @@ const ProjectDetails = () => {
   };
 
   const getProjectWorks = async (id) => {
-    getWorks(id,token)
+    getWorks(id, token)
       .then((res) => {
         setWorks(res.data);
         console.log(res.data);
@@ -376,12 +381,12 @@ const ProjectDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     getproject();
-  }, [openWork,openUpdate]);
+  }, [openWork, openUpdate]);
 
   useEffect(() => {
     getProjectWorks(id);
   }, [created]);
-  
+
   const [alignment, setAlignment] = React.useState(true);
 
 
@@ -395,35 +400,45 @@ const ProjectDetails = () => {
       ) : (
         <>
           <Header>
-            <Title>{item.title}</Title>
-            <Desc>{item.desc}</Desc>
-            <Tags>
-              {item.tags.map((tag) => (
-                <Tag
-                  tagColor={
-                    tagColors[Math.floor(Math.random() * tagColors.length)]
-                  }
-                >
-                  {tag}
-                </Tag>
-              ))}
-            </Tags>
-            <Members>
-              <AvatarGroup>
-                {members.map((member) => (
-                  <Avatar
-                    sx={{ marginRight: "-12px", width: "38px", height: "38px" }}
-                    src={member.id.img}
-                  >
-                    {member.id.name.charAt(0)}
-                  </Avatar>
-                ))}
-              </AvatarGroup>
-              <InviteButton onClick={() => setInvitePopup(true)}>
-                <PersonAdd sx={{ fontSize: "12px" }} />
-                Invite
-              </InviteButton>
-            </Members>
+            <FLexDispay style={{ backgroundImg: `url(${item.img})` }}>
+              <div>
+                <Title>{item.title}</Title>
+                <Desc>{item.desc}</Desc>
+                <Tags>
+                  {item.tags.map((tag) => (
+                    <Tag
+                      tagColor={
+                        tagColors[Math.floor(Math.random() * tagColors.length)]
+                      }
+                    >
+                      {tag}
+                    </Tag>
+                  ))}
+                </Tags>
+                <Members>
+                  <AvatarGroup>
+                    {members.map((member) => (
+                      <Avatar
+                        sx={{ marginRight: "-12px", width: "38px", height: "38px" }}
+                        src={member.id.img}
+                      >
+                        {member.id.name.charAt(0)}
+                      </Avatar>
+                    ))}
+                  </AvatarGroup>
+                  <InviteButton onClick={() => setInvitePopup(true)}>
+                    <PersonAdd sx={{ fontSize: "12px" }} />
+                    Invite
+                  </InviteButton>
+                </Members>
+              </div>
+              <div>
+                <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
+                  <Edit sx={{ fontSize: "16px" }} />
+                </IcoBtn>
+              </div>
+            </FLexDispay>
+
             <Hr />
             {invitePopup && (
               <InviteMembers
@@ -457,11 +472,14 @@ const ProjectDetails = () => {
                     <Text>
                       <DonutLarge sx={{ color: "#1976D2", fontSize: "20px" }} />
                       In Progress
-                      <Span>(5)</Span>
+                      <Span>(
+                        {
+                          works.filter(
+                            (item) => item.status === "Working"
+                          ).length
+                        }
+                        )</Span>
                     </Text>
-                    <AddNewButton>
-                      <Add />
-                    </AddNewButton>
                   </Top>
                   <Wrapper alignment={alignment}>
                     <AddWork
@@ -470,8 +488,9 @@ const ProjectDetails = () => {
                       setCreated={setCreated}
                     />
 
-                    {works.map((item) => (
-                      <div onClick = {()=> openWorkDetails(item)}>
+                    {works.filter((item) => item.status === "Working")
+                    .map((item) => (
+                      <div onClick={() => openWorkDetails(item)}>
                         <WorkCards
                           status="In Progress"
                           work={item}
@@ -487,10 +506,28 @@ const ProjectDetails = () => {
                         sx={{ color: "#67BC6D", fontSize: "20px" }}
                       />
                       Completed
-                      <Span>(5)</Span>
+
+                      <Span>(
+                        {
+                          works
+                          .filter(
+                            (item) => item.status === "Completed"
+                          ).length
+                        }
+                        )</Span>
                     </Text>
                   </Top>
-                  <Wrapper alignment={alignment}></Wrapper>
+                  <Wrapper alignment={alignment}>
+                    {works.filter((item) => item.status === "Completed")
+                    .map((item) => (
+                      <div onClick={() => openWorkDetails(item)}>
+                        <WorkCards
+                          status="Completed"
+                          work={item}
+                        />
+                      </div>
+                    ))}
+                  </Wrapper>
                 </ItemWrapper>
               </Column>
             </Work>
@@ -499,8 +536,8 @@ const ProjectDetails = () => {
               <SubCards>
                 <SubCardTop>
                   <SubCardsTitle>Members</SubCardsTitle>
-                  <IcoBtn>
-                    <Edit sx={{ fontSize: "16px" }} onClick={() => setOpenUpdate({state: true,type:'member',data: item})}/>
+                  <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'member', data: item })} >
+                    <Edit sx={{ fontSize: "16px" }} />
                   </IcoBtn>
                 </SubCardTop>
                 {members.map((member) => (
@@ -510,8 +547,8 @@ const ProjectDetails = () => {
               <SubCards>
                 <SubCardTop>
                   <SubCardsTitle>Tools</SubCardsTitle>
-                  <IcoBtn>
-                    <Add sx={{ fontSize: "20px" }} />
+                  <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'tool', data: item })}>
+                    <Edit sx={{ fontSize: "16px" }} />
                   </IcoBtn>
                 </SubCardTop>
                 <Tools>

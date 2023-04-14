@@ -283,6 +283,8 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
     const [showTools, setShowTools] = useState(false);
     const [showAddMember, setShowAddMember] = useState(false);
 
+
+
     const goToAddProject = () => {
         setShowAddProject(true);
         setShowTools(false);
@@ -300,6 +302,18 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
         setShowTools(false);
         setShowAddMember(true);
     };
+
+    useEffect(() => {
+
+        if (openUpdate.type === "all") {
+            goToAddProject();
+        } else if (openUpdate.type === "tool") {
+            goToAddTools();
+        } else if (openUpdate.type === "member") {
+            goToAddMember();
+        }
+
+    }, [openUpdate]);
 
     //add member part
 
@@ -355,48 +369,6 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
         setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
     };
 
-    const handleInviteAll = (id) => {
-        let teamInvite = false;
-        if (teamInvite) {
-            selectedUsers.map((user) => {
-                inviteTeamMembers(id, user, token)
-                    .then((res) => {
-                        console.log(res);
-                        dispatch(
-                            openSnackbar({
-                                message: `Invitation sent to ${user.name}`,
-                                type: "success",
-                            })
-                        );
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            });
-        } else {
-            selectedUsers.map((user) => {
-                inviteProjectMembers(id, user, token)
-                    .then((res) => {
-                        console.log(res);
-                        dispatch(
-                            openSnackbar({
-                                message: `Invitation sent to ${user.name}`,
-                                type: "success",
-                            })
-                        );
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        dispatch(
-                            openSnackbar({
-                                message: `Invitation cant be sent to ${user.name}`,
-                                type: "error",
-                            })
-                        );
-                    });
-            });
-        }
-    };
 
     const handleChange = (e) => {
         setInputs((prev) => {
@@ -648,25 +620,35 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                             </ToolsContainer>
 
                             <ButtonContainer>
-                                <OutlinedBox
-                                    button={true}
-                                    activeButton={false}
-                                    style={{ marginTop: "18px", width: "100%" }}
-                                    onClick={() => {
-                                        !backDisabled && goToAddProject();
-                                    }}
-                                >
-                                    Back
-                                </OutlinedBox>
+                                {openUpdate.type === "all" && (
+                                    <OutlinedBox
+                                        button={true}
+                                        activeButton={false}
+                                        style={{ marginTop: "18px", width: "100%" }}
+                                        onClick={() => {
+                                            !backDisabled && goToAddProject();
+                                        }}
+                                    >
+                                        Back
+                                    </OutlinedBox>
+                                )}
                                 <OutlinedBox
                                     button={true}
                                     activeButton={!disabled}
                                     style={{ marginTop: "18px", width: "100%" }}
                                     onClick={() => {
-                                        goToAddMember();
+                                        if (openUpdate.type === "tool") {
+                                            UpdateProject();
+                                        } else {
+                                            goToAddMember();
+                                        }
                                     }}
                                 >
-                                    Next
+                                    {Loading ? (
+                                        <CircularProgress color="inherit" size={20} />
+                                    ) : (<>
+                                        {openUpdate.type === "all" ? "Next" : "Update"}
+                                    </>)}
                                 </OutlinedBox>
                             </ButtonContainer>
                         </>
@@ -676,7 +658,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                         <>
                             <Label>Update Members :</Label>
                             <AddMember>
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '12px', marginTop: '6px' }}>Previous Members</div>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '12px', marginTop: '6px' }}>Project Members</div>
                                 <UsersList>
                                     {inputs.members.map((user) => (
                                         <MemberCard>
@@ -744,7 +726,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                                         "Update")}
                                                 </InviteButton>
                                                 <InviteButton onClick={() => removeProjectMembers(user, inputs.id)}>
-                                                {Loading ? (
+                                                    {Loading ? (
                                                         <CircularProgress color="inherit" size={20} />
                                                     ) : (
                                                         "Remove")}
@@ -753,90 +735,8 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                         </MemberCard>
                                     ))}
                                 </UsersList>
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '12px' }}>Add new Members</div>
-                                <Search>
-                                    <Input
-                                        placeholder="Search by email..."
-                                        value={search}
-                                        onChange={(e) => handleSearch(e)}
-                                    />
-                                    <SearchOutlined
-                                        sx={{ fontSize: "20px" }}
-                                        style={{ marginRight: "12px", marginLeft: "12px" }}
-                                    />
-                                </Search>
-                                <UsersList>
-                                    {users.map((user) => (
-                                        <MemberCard>
-                                            <UserData>
-                                                <Avatar
-                                                    sx={{ width: "34px", height: "34px" }}
-                                                    src={user.img}
-                                                >
-                                                    {user.name.charAt(0)}
-                                                </Avatar>
-                                                <Details>
-                                                    <Name>{user.name}</Name>
-                                                    <EmailId>{user.email}</EmailId>
-                                                </Details>
-                                            </UserData>
-                                            <Flex>
-                                                <Access>
-                                                    <Select name="Role" onChange={(e) => setAccess(e.target.value)}>
-                                                        <option value="" selected disabled hidden>Access</option>
-                                                        <option value="Admin">Admin</option>
-                                                        <option value="Member">Member</option>
-                                                        <option value="Editor">Editor</option>
-                                                        <option value="View Only">View Only</option>
-                                                    </Select>
-                                                </Access>
-                                                <Role>
-                                                    <Input style={{ width: '70px', fontSize: '12px', padding: '8px 10px' }} type="text" placeholder="Role" onChange={(e) => setRole(e.target.value)} />
-                                                </Role>
-
-                                            </Flex>
-                                            <InviteButton onClick={() => { access !== "" && role !== "" && handleSelect(user) }}>
-                                                Add
-                                            </InviteButton>
-                                        </MemberCard>
-                                    ))}
-                                    {selectedUsers.length === 0 && (
-                                        <div style={{ width: "100%", textAlign: "center" }}>
-                                            Search to add new members
-                                        </div>
-                                    )}
-                                    {selectedUsers.length > 0 && <div>Added Members :</div>}
-                                    {selectedUsers.map((user) => (
-                                        <MemberCard>
-                                            <UserData>
-                                                <Avatar
-                                                    sx={{ width: "34px", height: "34px" }}
-                                                    src={user.img}
-                                                >
-                                                    {user.name.charAt(0)}
-                                                </Avatar>
-                                                <Details>
-                                                    <Name>{user.name}</Name>
-                                                    <EmailId>{user.email}</EmailId>
-                                                </Details>
-                                            </UserData>
-                                            <Flex>
-                                                <Access>
-                                                    {user.access}
-                                                </Access>
-                                                <Role style={{ padding: '6px 10px' }}>
-                                                    {user.role}
-                                                </Role>
-
-                                            </Flex>
-                                            <InviteButton onClick={() => handleRemove(user)}>
-                                                Remove
-                                            </InviteButton>
-                                        </MemberCard>
-                                    ))}
-                                </UsersList>
                             </AddMember>
-
+                            {openUpdate.type === "all" && (
                             <ButtonContainer>
                                 <OutlinedBox
                                     button={true}
@@ -863,6 +763,7 @@ const UpdateProject = ({ openUpdate, setOpenUpdate }) => {
                                     )}
                                 </OutlinedBox>
                             </ButtonContainer>
+                            )}
                         </>
                     )}
                 </Wrapper>

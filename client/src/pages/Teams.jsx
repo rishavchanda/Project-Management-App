@@ -113,6 +113,15 @@ const InviteButton = styled.button`
   }
 `;
 
+const FLexDispay = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: bottom;
+  gap: 10px;
+  justify-content: space-between;
+`;
+
+
 const Hr = styled.hr`
   margin: 18px 0px;
   border: 0.5px solid ${({ theme }) => theme.soft + "99"};
@@ -234,6 +243,15 @@ const SubCardsTitle = styled.div`
   -webkit-box-orient: vertical;
 `;
 
+const Tools = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 8px;
+`;
+
 const Ideas = styled.div`
   display: flex;
   flex-direction: row;
@@ -295,6 +313,8 @@ const Teams = () => {
       ) : (
         <>
           <Header>
+          <FLexDispay>
+            <div>
             <Flex>
               {item.img!=="" &&
               <Avatar sx={{ width: "50px", height: "50px" }} src={item.img} />}
@@ -320,6 +340,13 @@ const Teams = () => {
                 Invite
               </InviteButton>
             </Members>
+            </div>
+            <div>
+                <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
+                  <Edit sx={{ fontSize: "16px" }} />
+                </IcoBtn>
+              </div>
+            </FLexDispay>
             <Hr />
             {invitePopup && (
               <InviteMembers setInvitePopup={setInvitePopup} id={id} teamInvite={true} />
@@ -404,6 +431,19 @@ const Teams = () => {
                 {item.members.map((member) => (
                   <MemberCard member={member} />
                 ))}
+              </SubCards>
+              <SubCards>
+                <SubCardTop>
+                  <SubCardsTitle>Tools</SubCardsTitle>
+                  <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'tool', data: item })}>
+                    <Edit sx={{ fontSize: "16px" }} />
+                  </IcoBtn>
+                </SubCardTop>
+                <Tools>
+                  {item.tools.map((tool) => (
+                    <ToolsCard tool={tool} />
+                  ))}
+                </Tools>
               </SubCards>
               <SubCards>
                 <SubCardTop>

@@ -297,6 +297,18 @@ const UpdateTeam = ({ openUpdate, setOpenUpdate }) => {
         setShowAddMember(true);
     };
 
+    useEffect(() => {
+
+        if (openUpdate.type === "all") {
+            goToAddTeam();
+        } else if (openUpdate.type === "tool") {
+            goToAddTools();
+        } else if (openUpdate.type === "member") {
+            goToAddMember();
+        }
+
+    }, [openUpdate]);
+
     //add member part
 
     const [search, setSearch] = React.useState("");
@@ -640,6 +652,7 @@ const UpdateTeam = ({ openUpdate, setOpenUpdate }) => {
                             </ToolsContainer>
 
                             <ButtonContainer>
+                                {openUpdate.type === "all" && (
                                 <OutlinedBox
                                     button={true}
                                     activeButton={false}
@@ -648,15 +661,24 @@ const UpdateTeam = ({ openUpdate, setOpenUpdate }) => {
                                 >
                                     Back
                                 </OutlinedBox>
+                                )}
                                 <OutlinedBox
                                     button={true}
                                     activeButton={!disabled}
                                     style={{ marginTop: "18px", width: "100%" }}
                                     onClick={() => {
-                                        goToAddMember();
+                                        if (openUpdate.type === "tool") {
+                                            updateTeamData();
+                                        } else {
+                                            goToAddMember();
+                                        }
                                     }}
                                 >
-                                    Next
+                                    {Loading ? (
+                                        <CircularProgress color="inherit" size={20} />
+                                    ) : (<>
+                                        {openUpdate.type === "all" ? "Next" : "Update"}
+                                    </>)}
                                 </OutlinedBox>
                             </ButtonContainer>
                         </>
@@ -744,90 +766,8 @@ const UpdateTeam = ({ openUpdate, setOpenUpdate }) => {
                                         </MemberCard>
                                     ))}
                                 </UsersList>
-                                <Search>
-                                    <Input
-                                        placeholder="Search by email..."
-                                        value={search}
-                                        onChange={(e) => handleSearch(e)}
-                                    />
-                                    <SearchOutlined
-                                        sx={{ fontSize: "20px" }}
-                                        style={{ marginRight: "12px", marginLeft: "12px" }}
-                                    />
-                                </Search>
-                                <UsersList>
-                                    {users.map((user) => (
-                                        <MemberCard>
-                                            <UserData>
-                                                <Avatar
-                                                    sx={{ width: "34px", height: "34px" }}
-                                                    src={user.img}
-                                                >
-                                                    {user.name.charAt(0)}
-                                                </Avatar>
-                                                <Details>
-                                                    <Name>{user.name}</Name>
-                                                    <EmailId>{user.email}</EmailId>
-                                                </Details>
-                                            </UserData>
-                                            <Flex>
-                                                <Access>
-                                                    <Select name="Role" onChange={(e) => setAccess(e.target.value)}>
-                                                        <option value="" selected disabled hidden>Access</option>
-                                                        <option value="Admin">Admin</option>
-                                                        <option value="Member">Member</option>
-                                                        <option value="Editor">Editor</option>
-                                                        <option value="View Only">View Only</option>
-                                                    </Select>
-                                                </Access>
-                                                <Role>
-                                                    <Input style={{ width: '70px', fontSize: '12px', padding: '8px 10px' }} type="text" placeholder="Role" onChange={(e) => setRole(e.target.value)} />
-                                                </Role>
-
-                                            </Flex>
-                                            <InviteButton onClick={() => handleSelect(user)}>
-                                                Add
-                                            </InviteButton>
-                                        </MemberCard>
-                                    ))}
-                                    {selectedUsers.length === 0 && (
-                                        <div style={{ width: "100%", textAlign: "center" }}>
-                                            Search to add new members
-                                        </div>
-                                    )}
-                                    {selectedUsers.length > 0 && <div>Added Members :</div>}
-                                    {selectedUsers.map((user) => (
-                                        <MemberCard>
-                                            <UserData>
-                                                <Avatar
-                                                    sx={{ width: "34px", height: "34px" }}
-                                                    src={user.img}
-                                                >
-                                                    {user.name.charAt(0)}
-                                                </Avatar>
-                                                <Details>
-                                                    <Name>{user.name}</Name>
-                                                    <EmailId>{user.email}</EmailId>
-                                                </Details>
-                                            </UserData>
-                                            <Flex>
-                                                <Access>
-                                                    {user.access}
-                                                </Access>
-                                                <Role style={{ padding: '6px 10px' }}>
-                                                    {user.role}
-                                                </Role>
-
-                                            </Flex>
-
-                                            <InviteButton onClick={() => handleRemove(user)}>
-                                                Remove
-                                            </InviteButton>
-                                        </MemberCard>
-                                    ))}
-                                </UsersList>
                             </AddMember>
-
+                            {openUpdate.type === "all" && (
                             <ButtonContainer>
                                 <OutlinedBox
                                     button={true}
@@ -850,6 +790,7 @@ const UpdateTeam = ({ openUpdate, setOpenUpdate }) => {
                                     )}
                                 </OutlinedBox>
                             </ButtonContainer>
+                            )}
                         </>
                     )}
                 </Wrapper>
