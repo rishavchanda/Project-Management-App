@@ -42,11 +42,10 @@ export const deleteTeam = async (req, res, next) => {
             if (Team.members[i].id.toString() === req.user.id) {
                 if (Team.members[i].access === "Owner") {
                     await Team.delete();
-                    User.findByIdAndUpdate(req.user.id, { $pull: { teams: req.params.id } }, { new: true }, (err, doc) => {
-                        if (err) {
-                            next(err);
-                        }
-                    });
+                    User.findByIdAndUpdate(req.user.id, { $pull: { teams: req.params.id } }, { new: true }).exec();
+                    for (let j = 0; j < Team.members.length; j++) {
+                        User.findByIdAndUpdate(Team.members[j].id, { $pull: { teams: req.params.id } }, { new: true }).exec();
+                    }
                     res.status(200).json("Team has been deleted...");
                 } else {
                     return next(createError(403, "You are not allowed to delete this Team!"));

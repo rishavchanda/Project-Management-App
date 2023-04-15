@@ -3,7 +3,7 @@ import { Fragment, useState, useRef } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { Add, Edit, PersonAdd } from "@mui/icons-material";
+import { Add, Delete, Edit, PersonAdd } from "@mui/icons-material";
 import { data, tools, members, ideas, tagColors } from "../data/data";
 import Card from "../components/Card";
 import MemberCard from "../components/MemberCard";
@@ -19,6 +19,7 @@ import InviteMembers from "../components/InviteMembers";
 import { getTeams } from "../api/index";
 import AddNewProject from "../components/AddNewProject";
 import UpdateTeam from "../components/UpdateTeam";
+import DeletePopup from "../components/DeletePopup";
 
 const Container = styled.div`
   padding: 14px 14px;
@@ -83,7 +84,7 @@ const Members = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 16px 0px;
+  margin: 8px 0px 0px 0px;
 `;
 
 const AvatarGroup = styled.div`
@@ -111,14 +112,6 @@ const InviteButton = styled.button`
     background-color: ${({ theme }) => theme.primary};
     color: ${({ theme }) => theme.text};
   }
-`;
-
-const FLexDispay = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: bottom;
-  gap: 10px;
-  justify-content: space-between;
 `;
 
 
@@ -276,6 +269,8 @@ const Teams = () => {
   //use state enum to check for which updation
   const [openUpdate,setOpenUpdate] = useState({state: false, type: "all", data: item});
 
+  // use state for delete
+  const [openDelete,setOpenDelete] = useState({state: false, type: "Team", name: item.name, id: id});
 
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
@@ -301,20 +296,19 @@ const Teams = () => {
     window.scrollTo(0, 0);
     getTeamDetails();
     setUser(JSON.parse(localStorage.getItem('user')))
-  }, [id, currentUser, newProject, openUpdate]);
+  }, [id, currentUser, newProject, openUpdate,openDelete]);
 
 
   return (
     <Container>
       {newProject && <AddNewProject setNewProject={setNewProject} teamId={id} teamProject={true} />}
       {openUpdate.state && <UpdateTeam openUpdate={openUpdate} setOpenUpdate={setOpenUpdate} type={openUpdate.type} />}
+      {openDelete.state && <DeletePopup openDelete={openDelete} setOpenDelete={setOpenDelete} type={openDelete.type} />}
       {loading ? (
         <>Loading</>
       ) : (
         <>
           <Header>
-          <FLexDispay>
-            <div>
             <Flex>
               {item.img!=="" &&
               <Avatar sx={{ width: "50px", height: "50px" }} src={item.img} />}
@@ -340,13 +334,14 @@ const Teams = () => {
                 Invite
               </InviteButton>
             </Members>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
+                <Edit sx={{ fontSize: "20px" }} />
+              </IcoBtn>
+              <IcoBtn onClick={() => setOpenDelete({ state: true, type: 'Team', name: item.name, id: item._id,token: token })}>
+                <Delete sx={{ fontSize: "20px" }} />
+              </IcoBtn>
             </div>
-            <div>
-                <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
-                  <Edit sx={{ fontSize: "16px" }} />
-                </IcoBtn>
-              </div>
-            </FLexDispay>
             <Hr />
             {invitePopup && (
               <InviteMembers setInvitePopup={setInvitePopup} id={id} teamInvite={true} />

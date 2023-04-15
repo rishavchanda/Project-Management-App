@@ -37,20 +37,20 @@ export const deleteProject = async (req, res, next) => {
     const project = await Project.findById(req.params.id);
     if (!project) return next(createError(404, "Project not found!"));
     for (let i = 0; i < project.members.length; i++) {
-      if (project.members[i].id === req.user.id) {
+      if (project.members[i].id.toString() === req.user.id) {
         if (project.members[i].access === "Owner") {
           await project.delete();
-          User.findByIdAndUpdate(req.user.id, { $pull: { projects: req.params.id } }, { new: true }, (err, doc) => {
-            if (err) {
-              next(err);
-            }
-          });
+          User.findByIdAndUpdate(req.user.id, { $pull: { projects: req.params.id } }, { new: true }).exec();
+          for (let j = 0; j < project.members.length; j++) {
+            User.findByIdAndUpdate(project.members[j].id, { $pull: { projects: req.params.id } }, { new: true }).exec();
+          }
           res.status(200).json("Project has been deleted...");
         } else {
           return next(createError(403, "You are not allowed to delete this project!"));
         }
       }
     }
+
   } catch (err) {
     next(err);
   }
@@ -135,7 +135,7 @@ export const updateMembers = async (req, res, next) => {
       }
     }
     return next(createError(403, "You can update only if you are a member of this project!"));
-  
+
   } catch (err) {
     next(err);
   }
@@ -187,7 +187,7 @@ export const removeMember = async (req, res, next) => {
       }
     }
     return next(createError(403, "You can update only if you are a member of this project!"));
-  
+
   } catch (err) {
     next(err);
   }

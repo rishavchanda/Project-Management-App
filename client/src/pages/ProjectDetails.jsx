@@ -8,6 +8,7 @@ import {
   AlignHorizontalLeft,
   AlignVerticalTop,
   CheckCircleOutlineOutlined,
+  Delete,
   DonutLarge,
   Edit,
   PersonAdd,
@@ -27,6 +28,7 @@ import InviteMembers from "../components/InviteMembers";
 import AddWork from "../components/AddWork";
 import WorkDetails from "../components/WorkDetails";
 import UpdateProject from "../components/UpdateProject";
+import DeletePopup from "../components/DeletePopup";
 
 const Container = styled.div`
   padding: 14px 14px;
@@ -102,7 +104,7 @@ const Members = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 16px 0px;
+  margin: 8px 0px 0px 0px;
 `;
 
 const AvatarGroup = styled.div`
@@ -130,15 +132,6 @@ const InviteButton = styled.button`
     background-color: ${({ theme }) => theme.primary};
     color: ${({ theme }) => theme.text};
   }
-`;
-
-const FLexDispay = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: bottom;
-  gap: 10px;
-  justify-content: space-between;
-  
 `;
 
 const Hr = styled.hr`
@@ -331,12 +324,15 @@ const ProjectDetails = () => {
 
   const [openWork, setOpenWork] = useState(false);
 
+  const token = localStorage.getItem("token");
 
   //hooks for updates
   //use state enum to check for which updation
   const [openUpdate, setOpenUpdate] = useState({ state: false, type: "all", data: item });
 
-  const token = localStorage.getItem("token");
+  //use state for delete popup
+  const [openDelete, setOpenDelete] = useState({ state: false, type: "Project", data: item , token: token});
+
   const dispatch = useDispatch();
   const getproject = async () => {
     getProjectDetails(id, token)
@@ -395,49 +391,49 @@ const ProjectDetails = () => {
     <Container>
       {openWork && <WorkDetails setOpenWork={setOpenWork} work={currentWork} />}
       {openUpdate.state && <UpdateProject openUpdate={openUpdate} setOpenUpdate={setOpenUpdate} type={openUpdate.type} />}
+      {openDelete.state && <DeletePopup openDelete={openDelete} setOpenDelete={setOpenDelete} />}
       {loading ? (
         <>Loading</>
       ) : (
         <>
           <Header>
-            <FLexDispay style={{ backgroundImg: `url(${item.img})` }}>
-              <div>
-                <Title>{item.title}</Title>
-                <Desc>{item.desc}</Desc>
-                <Tags>
-                  {item.tags.map((tag) => (
-                    <Tag
-                      tagColor={
-                        tagColors[Math.floor(Math.random() * tagColors.length)]
-                      }
-                    >
-                      {tag}
-                    </Tag>
-                  ))}
-                </Tags>
-                <Members>
-                  <AvatarGroup>
-                    {members.map((member) => (
-                      <Avatar
-                        sx={{ marginRight: "-12px", width: "38px", height: "38px" }}
-                        src={member.id.img}
-                      >
-                        {member.id.name.charAt(0)}
-                      </Avatar>
-                    ))}
-                  </AvatarGroup>
-                  <InviteButton onClick={() => setInvitePopup(true)}>
-                    <PersonAdd sx={{ fontSize: "12px" }} />
-                    Invite
-                  </InviteButton>
-                </Members>
-              </div>
-              <div>
-                <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
-                  <Edit sx={{ fontSize: "16px" }} />
-                </IcoBtn>
-              </div>
-            </FLexDispay>
+            <Title>{item.title}</Title>
+            <Desc>{item.desc}</Desc>
+            <Tags>
+              {item.tags.map((tag) => (
+                <Tag
+                  tagColor={
+                    tagColors[Math.floor(Math.random() * tagColors.length)]
+                  }
+                >
+                  {tag}
+                </Tag>
+              ))}
+            </Tags>
+            <Members>
+              <AvatarGroup>
+                {members.map((member) => (
+                  <Avatar
+                    sx={{ marginRight: "-12px", width: "38px", height: "38px" }}
+                    src={member.id.img}
+                  >
+                    {member.id.name.charAt(0)}
+                  </Avatar>
+                ))}
+              </AvatarGroup>
+              <InviteButton onClick={() => setInvitePopup(true)}>
+                <PersonAdd sx={{ fontSize: "12px" }} />
+                Invite
+              </InviteButton>
+            </Members>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
+                <Edit sx={{ fontSize: "20px" }} />
+              </IcoBtn>
+              <IcoBtn onClick={() => setOpenDelete({ state: true, type: 'Project', name: item.title, id: item._id,token: token })}>
+                <Delete sx={{ fontSize: "20px" }} />
+              </IcoBtn>
+            </div>
 
             <Hr />
             {invitePopup && (
@@ -489,14 +485,14 @@ const ProjectDetails = () => {
                     />
 
                     {works.filter((item) => item.status === "Working")
-                    .map((item) => (
-                      <div onClick={() => openWorkDetails(item)}>
-                        <WorkCards
-                          status="In Progress"
-                          work={item}
-                        />
-                      </div>
-                    ))}
+                      .map((item) => (
+                        <div onClick={() => openWorkDetails(item)}>
+                          <WorkCards
+                            status="In Progress"
+                            work={item}
+                          />
+                        </div>
+                      ))}
                   </Wrapper>
                 </ItemWrapper>
                 <ItemWrapper>
@@ -510,23 +506,23 @@ const ProjectDetails = () => {
                       <Span>(
                         {
                           works
-                          .filter(
-                            (item) => item.status === "Completed"
-                          ).length
+                            .filter(
+                              (item) => item.status === "Completed"
+                            ).length
                         }
                         )</Span>
                     </Text>
                   </Top>
                   <Wrapper alignment={alignment}>
                     {works.filter((item) => item.status === "Completed")
-                    .map((item) => (
-                      <div onClick={() => openWorkDetails(item)}>
-                        <WorkCards
-                          status="Completed"
-                          work={item}
-                        />
-                      </div>
-                    ))}
+                      .map((item) => (
+                        <div onClick={() => openWorkDetails(item)}>
+                          <WorkCards
+                            status="Completed"
+                            work={item}
+                          />
+                        </div>
+                      ))}
                   </Wrapper>
                 </ItemWrapper>
               </Column>

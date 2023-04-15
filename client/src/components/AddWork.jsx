@@ -395,7 +395,7 @@ const AddWork = ({ ProjectMembers, ProjectId, setCreated }) => {
       {step === 0 && (
         <>
           <Top>
-            <Title>Create new card</Title>
+            <Title>Create new work</Title>
           </Top>
           <OutlinedBox style={{ marginTop: "8px" }}>
             <TextInput
