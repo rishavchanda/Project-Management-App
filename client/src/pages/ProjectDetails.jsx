@@ -16,7 +16,7 @@ import {
 import { data, tools, members, ideas, tagColors } from "../data/data";
 import WorkCards from "../components/WorkCards";
 import MemberCard from "../components/MemberCard";
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import ToolsCard from "../components/ToolsCard";
 import IdeaCard from "../components/IdeaCard";
 import axios from "axios";
@@ -331,7 +331,7 @@ const ProjectDetails = () => {
   const [openUpdate, setOpenUpdate] = useState({ state: false, type: "all", data: item });
 
   //use state for delete popup
-  const [openDelete, setOpenDelete] = useState({ state: false, type: "Project", data: item , token: token});
+  const [openDelete, setOpenDelete] = useState({ state: false, type: "Project", data: item, token: token });
 
   const dispatch = useDispatch();
   const getproject = async () => {
@@ -393,7 +393,9 @@ const ProjectDetails = () => {
       {openUpdate.state && <UpdateProject openUpdate={openUpdate} setOpenUpdate={setOpenUpdate} type={openUpdate.type} />}
       {openDelete.state && <DeletePopup openDelete={openDelete} setOpenDelete={setOpenDelete} />}
       {loading ? (
-        <>Loading</>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px',height: '300px' }}>
+          <CircularProgress />
+        </div>
       ) : (
         <>
           <Header>
@@ -430,7 +432,7 @@ const ProjectDetails = () => {
               <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
                 <Edit sx={{ fontSize: "20px" }} />
               </IcoBtn>
-              <IcoBtn onClick={() => setOpenDelete({ state: true, type: 'Project', name: item.title, id: item._id,token: token })}>
+              <IcoBtn onClick={() => setOpenDelete({ state: true, type: 'Project', name: item.title, id: item._id, token: token })}>
                 <Delete sx={{ fontSize: "20px" }} />
               </IcoBtn>
             </div>

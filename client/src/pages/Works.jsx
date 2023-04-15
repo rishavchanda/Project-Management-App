@@ -15,7 +15,7 @@ import {
 import { data, tools, members, ideas, tagColors } from "../data/data";
 import WorkCards from "../components/WorkCards";
 import MemberCard from "../components/MemberCard";
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import ToolsCard from "../components/ToolsCard";
 import IdeaCard from "../components/IdeaCard";
 import axios from "axios";
@@ -457,7 +457,9 @@ const ProjectDetails = () => {
     <Container>
       {openWork && <WorkDetails setOpenWork={setOpenWork} work={currentWork} />}
       {loading ? (
-        <>Loading</>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px',height: '300px' }}>
+        <CircularProgress />
+      </div>
       ) : (
         <>
           <Header></Header>

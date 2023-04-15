@@ -7,7 +7,7 @@ import { Add, Delete, Edit, PersonAdd } from "@mui/icons-material";
 import { data, tools, members, ideas, tagColors } from "../data/data";
 import Card from "../components/Card";
 import MemberCard from "../components/MemberCard";
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import ToolsCard from "../components/ToolsCard";
 import IdeaCard from "../components/IdeaCard";
 import axios from "axios";
@@ -267,10 +267,10 @@ const Teams = () => {
 
   //hooks for updates
   //use state enum to check for which updation
-  const [openUpdate,setOpenUpdate] = useState({state: false, type: "all", data: item});
+  const [openUpdate, setOpenUpdate] = useState({ state: false, type: "all", data: item });
 
   // use state for delete
-  const [openDelete,setOpenDelete] = useState({state: false, type: "Team", name: item.name, id: id});
+  const [openDelete, setOpenDelete] = useState({ state: false, type: "Team", name: item.name, id: id });
 
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
@@ -296,7 +296,7 @@ const Teams = () => {
     window.scrollTo(0, 0);
     getTeamDetails();
     setUser(JSON.parse(localStorage.getItem('user')))
-  }, [id, currentUser, newProject, openUpdate,openDelete]);
+  }, [id, currentUser, newProject, openUpdate, openDelete]);
 
 
   return (
@@ -305,13 +305,15 @@ const Teams = () => {
       {openUpdate.state && <UpdateTeam openUpdate={openUpdate} setOpenUpdate={setOpenUpdate} type={openUpdate.type} />}
       {openDelete.state && <DeletePopup openDelete={openDelete} setOpenDelete={setOpenDelete} type={openDelete.type} />}
       {loading ? (
-        <>Loading</>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px',height: '300px' }}>
+          <CircularProgress />
+        </div>
       ) : (
         <>
           <Header>
             <Flex>
-              {item.img!=="" &&
-              <Avatar sx={{ width: "50px", height: "50px" }} src={item.img} />}
+              {item.img !== "" &&
+                <Avatar sx={{ width: "50px", height: "50px" }} src={item.img} />}
               <div>
                 <Title>{item.name}</Title>
                 <Desc>{item.desc}</Desc>
@@ -338,7 +340,7 @@ const Teams = () => {
               <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'all', data: item })}>
                 <Edit sx={{ fontSize: "20px" }} />
               </IcoBtn>
-              <IcoBtn onClick={() => setOpenDelete({ state: true, type: 'Team', name: item.name, id: item._id,token: token })}>
+              <IcoBtn onClick={() => setOpenDelete({ state: true, type: 'Team', name: item.name, id: item._id, token: token })}>
                 <Delete sx={{ fontSize: "20px" }} />
               </IcoBtn>
             </div>
@@ -419,7 +421,7 @@ const Teams = () => {
               <SubCards>
                 <SubCardTop>
                   <SubCardsTitle>Members</SubCardsTitle>
-                  <IcoBtn onClick={() => setOpenUpdate({state: true,type:'member',data: item})}>
+                  <IcoBtn onClick={() => setOpenUpdate({ state: true, type: 'member', data: item })}>
                     <Edit sx={{ fontSize: "16px" }} />
                   </IcoBtn>
                 </SubCardTop>

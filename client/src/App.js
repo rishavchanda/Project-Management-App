@@ -59,7 +59,7 @@ function App() {
   //set the menuOpen state to false if the screen size is less than 768px
   useEffect(() => {
     const resize = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1110) {
         setMenuOpen(false);
       } else {
         setMenuOpen(true);
@@ -68,9 +68,6 @@ function App() {
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);
-
-  useEffect(() => {
   }, []);
 
   return (

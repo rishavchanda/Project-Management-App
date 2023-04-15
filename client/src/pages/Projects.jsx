@@ -11,6 +11,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { useCookies } from "react-cookie";
 import { getProjects } from "../api/index";
 import AddNewProject from "../components/AddNewProject";
+import { CircularProgress } from "@mui/material";
 
 const Container = styled.div`
   width: 100%;
@@ -93,7 +94,7 @@ const Projects = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useSelector((state) => state.user);
-  const [newProject,setNewProject] = useState(false);
+  const [newProject, setNewProject] = useState(false);
 
 
   const token = localStorage.getItem("token");
@@ -118,43 +119,32 @@ const Projects = () => {
   useEffect(() => {
     getprojects();
     window.scrollTo(0, 0);
-  }, [newProject,currentUser]);
+  }, [newProject, currentUser]);
 
 
   return (
     <Container>
       {newProject && <AddNewProject setNewProject={setNewProject} />}
-      <Column>
-        {statuses.map((s, index) => {
-          return (
-            <ItemWrapper key={index}>
-              {s.icon} {s.status}
-              <Span>
-                ({data.filter((item) => item.status == s.status).length})
-              </Span>
-              <Wrapper key={index}>
-                {s.status === "Working" && (
-                  <OutlinedBox button={true} activeButton={false} onClick={() => setNewProject(true)}>
-                    New Project
-                  </OutlinedBox>
-                )}
-                {loading ? (
-                  <>
-                    <Skeleton
-                      sx={{ marginBottom: "12px", borderRadius: "20px" }}
-                      variant="rounded"
-                      width={290}
-                      height={240}
-                    />
-                    <Skeleton
-                      sx={{ marginBottom: "12px", borderRadius: "20px" }}
-                      variant="rounded"
-                      width={290}
-                      height={240}
-                    />
-                  </>
-                ) : (
-                  data
+      {loading ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px', height: '300px' }}>
+          <CircularProgress />
+        </div>
+      ) : (
+        <Column>
+          {statuses.map((s, index) => {
+            return (
+              <ItemWrapper key={index}>
+                {s.icon} {s.status}
+                <Span>
+                  ({data.filter((item) => item.status == s.status).length})
+                </Span>
+                <Wrapper key={index}>
+                  {s.status === "Working" && (
+                    <OutlinedBox button={true} activeButton={false} onClick={() => setNewProject(true)}>
+                      New Project
+                    </OutlinedBox>
+                  )}
+                  {data
                     .filter((item) => item.status == s.status)
                     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
                     .map((item, idx) => (
@@ -165,13 +155,13 @@ const Projects = () => {
                         status={s}
                         tagColor={tagColors[3]}
                       />
-                    ))
-                )}
-              </Wrapper>
-            </ItemWrapper>
-          );
-        })}
-      </Column>
+                    ))}
+                </Wrapper>
+              </ItemWrapper>
+            );
+          })}
+        </Column>
+      )}
     </Container>
   );
 };
