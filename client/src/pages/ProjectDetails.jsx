@@ -29,6 +29,7 @@ import AddWork from "../components/AddWork";
 import WorkDetails from "../components/WorkDetails";
 import UpdateProject from "../components/UpdateProject";
 import DeletePopup from "../components/DeletePopup";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 
 const Container = styled.div`
   padding: 14px 14px;
@@ -41,8 +42,7 @@ const Header = styled.div``;
 
 const Column = styled.div`
   display: flex;
-  ${(props) =>
-    props.alignment ? "flex-direction: row;" : "flex-direction: column;"}
+  flex-direction: column;
   margin: 12px 0px;
   @media screen and (max-width: 480px) {
     margin: 6px 0px;
@@ -479,7 +479,8 @@ const ProjectDetails = () => {
                         )</Span>
                     </Text>
                   </Top>
-                  <Wrapper alignment={alignment}>
+                  <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 2 }}>
+                    <Masonry gutter="14px">
                     <AddWork
                       ProjectMembers={members}
                       ProjectId={id}
@@ -495,7 +496,8 @@ const ProjectDetails = () => {
                           />
                         </div>
                       ))}
-                  </Wrapper>
+                  </Masonry>
+                  </ResponsiveMasonry>
                 </ItemWrapper>
                 <ItemWrapper>
                   <Top>
@@ -515,7 +517,8 @@ const ProjectDetails = () => {
                         )</Span>
                     </Text>
                   </Top>
-                  <Wrapper alignment={alignment}>
+                  <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 2 }}>
+                    <Masonry gutter="14px">
                     {works.filter((item) => item.status === "Completed")
                       .map((item) => (
                         <div onClick={() => openWorkDetails(item)}>
@@ -525,7 +528,8 @@ const ProjectDetails = () => {
                           />
                         </div>
                       ))}
-                  </Wrapper>
+                 </Masonry>
+                 </ResponsiveMasonry>
                 </ItemWrapper>
               </Column>
             </Work>

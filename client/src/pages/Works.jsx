@@ -27,6 +27,7 @@ import InviteMembers from "../components/InviteMembers";
 import AddWork from "../components/AddWork";
 import WorkDetails from "../components/WorkDetails";
 import TaskCard from "../components/TaskCard";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 
 const Container = styled.div`
   padding: 14px 14px;
@@ -179,18 +180,14 @@ const ToggleButton = styled.div`
   }}
   ${(props) => {
     if (props.alignment && props.button == "col") {
-      return `border-radius: 5px 0px 0px 5px; border: 2px solid ${
-        props.theme.primary
-      }; color: ${props.theme.primary}; background-color: ${
-        props.theme.primary + "11"
-      };`;
+      return `border-radius: 5px 0px 0px 5px; border: 2px solid ${props.theme.primary
+        }; color: ${props.theme.primary}; background-color: ${props.theme.primary + "11"
+        };`;
     }
     if (!props.alignment && props.button == "row") {
-      return `border-radius: 0px 5px 5px 0px; border: 2px solid ${
-        props.theme.primary
-      }; color: ${props.theme.primary}; background-color: ${
-        props.theme.primary + "11"
-      };`;
+      return `border-radius: 0px 5px 5px 0px; border: 2px solid ${props.theme.primary
+        }; color: ${props.theme.primary}; background-color: ${props.theme.primary + "11"
+        };`;
     }
   }}
 `;
@@ -237,8 +234,9 @@ const Span = styled.span`
 const Wrapper = styled.div`
   padding: 12px 0px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-gap: 12px;
+  align-items: stretch;
 `;
 
 const AddNewButton = styled.div`
@@ -457,9 +455,9 @@ const ProjectDetails = () => {
     <Container>
       {openWork && <WorkDetails setOpenWork={setOpenWork} work={currentWork} />}
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px',height: '300px' }}>
-        <CircularProgress />
-      </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px', height: '300px' }}>
+          <CircularProgress />
+        </div>
       ) : (
         <>
           <Header></Header>
@@ -497,15 +495,17 @@ const ProjectDetails = () => {
                       </Span>
                     </Text>
                   </Top>
-                  <Wrapper alignment={alignment}>
-                    {works
-                      .filter((item) => item.status == "Working")
-                      .map((item) => (
-                        <div onClick={() => openWorkDetails(item)}>
-                          <WorkCards status="In Progress" work={item} />
-                        </div>
-                      ))}
-                  </Wrapper>
+                  <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 2 }}>
+                    <Masonry gutter="14px">
+                      {works
+                        .filter((item) => item.status == "Working")
+                        .map((item) => (
+                          <div onClick={() => openWorkDetails(item)}>
+                            <WorkCards status="In Progress" work={item} />
+                          </div>
+                        ))}
+                    </Masonry>
+                  </ResponsiveMasonry>
                 </ItemWrapper>
                 <ItemWrapper>
                   <Top>
@@ -524,15 +524,17 @@ const ProjectDetails = () => {
                       </Span>
                     </Text>
                   </Top>
-                  <Wrapper alignment={alignment}>
-                    {works
-                      .filter((item) => item.status == "Completed")
-                      .map((item) => (
-                        <div onClick={() => openWorkDetails(item)}>
-                          <WorkCards status="In Progress" work={item} />
-                        </div>
-                      ))}
-                  </Wrapper>
+                  <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 2 }}>
+                    <Masonry gutter="14px">
+                      {works
+                        .filter((item) => item.status == "Completed")
+                        .map((item) => (
+                          <div onClick={() => openWorkDetails(item)}>
+                            <WorkCards status="In Progress" work={item} />
+                          </div>
+                        ))}
+                    </Masonry>
+                  </ResponsiveMasonry>
                 </ItemWrapper>
               </Column>
             </Work>
