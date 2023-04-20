@@ -4,15 +4,11 @@ import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
-    margin: 12px 0px;
     display: flex;
-    max-width: 800px;
     width: 100%;
     height: 100%;
     flex-direction: column;
     background-color:  ${({ theme }) => theme.card};
-    border-radius: 0px 10px 10px 0px;
-
 `
 
 const TopBar = styled.div`

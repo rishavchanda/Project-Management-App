@@ -275,7 +275,7 @@ const Teams = () => {
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getTeamDetails = async () => {
-    getTeams(id, token)
+    await getTeams(id, token)
       .then((res) => {
         setItems(res.data);
         setProjects(res.data.projects);

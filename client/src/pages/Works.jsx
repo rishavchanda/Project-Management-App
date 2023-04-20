@@ -413,7 +413,7 @@ const ProjectDetails = () => {
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const getWorks = async () => {
-    userWorks(token)
+   await  userWorks(token)
       .then((res) => {
         setWorks(res.data);
         setLoading(false);
@@ -426,7 +426,7 @@ const ProjectDetails = () => {
   };
 
   const getTasks = async () => {
-    userTasks(token)
+    await userTasks(token)
       .then((res) => {
         setTasks(res.data);
         setLoading(false);

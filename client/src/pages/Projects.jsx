@@ -89,18 +89,17 @@ const OutlinedBox = styled.div`
   }
 `;
 
-const Projects = () => {
+const Projects = ({newProject,setNewProject}) => {
   const dispatch = useDispatch();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useSelector((state) => state.user);
-  const [newProject, setNewProject] = useState(false);
 
 
   const token = localStorage.getItem("token");
   console.log(token)
   const getprojects = async () => {
-    getProjects(token)
+    await getProjects(token)
       .then((res) => {
         setData(res.data);
         setLoading(false);
@@ -124,7 +123,6 @@ const Projects = () => {
 
   return (
     <Container>
-      {newProject && <AddNewProject setNewProject={setNewProject} />}
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0px', height: '300px' }}>
           <CircularProgress />

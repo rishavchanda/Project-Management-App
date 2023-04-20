@@ -4,19 +4,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Continer = styled.div`
-margin: 12px 0px;
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 360px;
     height: 100%;
     background-color:  ${({ theme }) => theme.card};
-    border-right: 1px solid ${({ theme }) => theme.soft};
-    @media (max-width: 800px) {border-right: 1px solid ${({ theme }) => theme.soft};
-    border-right: none;
-    border-radius: 0px 0px 0px 0px;
-    }
-    border-radius: 10px 0px 0px 10px;
 `
 
 const TopBar = styled.div`
@@ -99,7 +91,7 @@ const Time = styled.span`
 `
 
 
-const ChatContact = ({showChat,setShowChat}) => {
+const ChatContact = ({ showChat, setShowChat }) => {
     return (
         <Continer>
             <TopBar>

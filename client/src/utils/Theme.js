@@ -35,7 +35,7 @@ Swatch 6
 }
 
 export const lightTheme = {
-    bg:"#F7F5F4",
+    bg:"#F8F9FD",
     bgLighter:"#FFFFFF",
     itemHover: "#F7F5F4",
     itemText:"#555F61",

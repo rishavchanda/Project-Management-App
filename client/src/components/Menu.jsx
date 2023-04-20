@@ -13,6 +13,9 @@ import {
   StreamRounded,
   WorkspacesRounded,
   Public,
+  AccountTreeRounded,
+  DashboardRounded,
+  AddTaskRounded,
 } from "@mui/icons-material";
 import { tagColors } from "../data/data";
 import LogoIcon from "../Images/Logo.svg";
@@ -131,7 +134,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
 
   const getteams = async () => {
     setTeamsLoading(true);
-    getUsers(token)
+   await getUsers(token)
       .then((res) => {
         setTeams(res.data.teams);
         setTeamsLoading(false);
@@ -163,7 +166,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
       <ContainerWrapper>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           <Item>
-            <Dashboard />
+            <DashboardRounded />
             Dashboard
           </Item>
         </Link>
@@ -172,7 +175,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
           style={{ textDecoration: "none", color: "inherit" }}
         >
           <Item>
-            <HubRounded />
+            <AccountTreeRounded />
             Projects
           </Item>
         </Link>
@@ -181,7 +184,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
           style={{ textDecoration: "none", color: "inherit" }}
         >
           <Item>
-            <StreamRounded />
+            <AddTaskRounded />
             Your Works
           </Item>
         </Link>

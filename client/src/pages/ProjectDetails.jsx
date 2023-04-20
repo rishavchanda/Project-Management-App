@@ -335,7 +335,7 @@ const ProjectDetails = () => {
 
   const dispatch = useDispatch();
   const getproject = async () => {
-    getProjectDetails(id, token)
+    await getProjectDetails(id, token)
       .then((res) => {
         setItems(res.data);
         setMembers(res.data.members);
@@ -354,7 +354,7 @@ const ProjectDetails = () => {
   };
 
   const getProjectWorks = async (id) => {
-    getWorks(id, token)
+   await  getWorks(id, token)
       .then((res) => {
         setWorks(res.data);
         console.log(res.data);

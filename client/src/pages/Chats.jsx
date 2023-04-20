@@ -31,6 +31,34 @@ const Wrapper = styled.div`
   }
 `
 
+const ChatsContact = styled.div`
+margin: 12px 0px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 360px;
+    height: 100%;
+    background-color:  ${({ theme }) => theme.card};
+    border-right: 1px solid ${({ theme }) => theme.soft};
+    @media (max-width: 800px) {border-right: 1px solid ${({ theme }) => theme.soft};
+    border-right: none;
+    border-radius: 0px 0px 0px 0px;
+    }
+    border-radius: 10px 0px 0px 10px;
+`
+
+const ChatsContainer = styled.div`
+
+margin: 12px 0px;
+display: flex;
+max-width: 800px;
+width: 100%;
+height: 100%;
+flex-direction: column;
+background-color:  ${({ theme }) => theme.card};
+border-radius: 0px 10px 10px 0px;
+`
+
 const Chats = () => {
   //get the window size and hide the chat container for mobile and dislay it for desktop
   const [width, setWidth] = React.useState(window.innerWidth)
@@ -54,8 +82,12 @@ const Chats = () => {
             <ChatContact showChat={showChat} setShowChat={setShowChat} />)
           : (
             <>
-              <ChatContact showChat={showChat} setShowChat={setShowChat} />
-              <ChatContainer showChat={showChat} setShowChat={setShowChat} />
+              <ChatsContact>
+                <ChatContact showChat={showChat} setShowChat={setShowChat} />
+              </ChatsContact>
+              <ChatsContainer>
+                <ChatContainer showChat={showChat} setShowChat={setShowChat} />
+              </ChatsContainer>
             </>
           )}
       </Wrapper>

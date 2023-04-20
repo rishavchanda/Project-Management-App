@@ -28,6 +28,7 @@ import Home from './pages/Home/Home';
 import Chats from './pages/Chats';
 import ProjectInvite from './components/ProjectInvite';
 import TeamInvite from './components/TeamInvite';
+import AddNewProject from './components/AddNewProject';
 
 const Container = styled.div`
 height: 100vh;
@@ -49,6 +50,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [menuOpen, setMenuOpen] = useState(true);
   const [newTeam, setNewTeam] = useState(false);
+  const [newProject, setNewProject] = useState(false);
   const { open, message, severity } = useSelector((state) => state.snackbar);
   const [loading, setLoading] = useState(false);
 
@@ -83,26 +85,27 @@ function App() {
                   <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
                   <Wrapper>
                     {newTeam && <AddNewTeam setNewTeam={setNewTeam} />}
+                    {newProject && <AddNewProject setNewProject={setNewProject} />}
                     <Routes>
                       <Route >
-                        <Route exact path="/" element={<Dashboard />} />
-                        <Route path="projects" element={<Projects />} />
+                        <Route exact path="/" element={<Dashboard setNewTeam={setNewTeam} setNewProject={setNewProject}/>} />
+                        <Route path="projects" element={<Projects newProject={newProject} setNewProject={setNewProject}/>} />
                         <Route path="teams">
                           <Route path=":id" element={<Teams />} />
                         </Route>
                         <Route path="team/invite">
-                          <Route path=":code" element={<TeamInvite/>} />
+                          <Route path=":code" element={<TeamInvite />} />
                         </Route>
                         <Route path="projects">
                           <Route path=":id" element={<ProjectDetails />} />
                         </Route>
                         <Route path="projects/invite">
-                          <Route path=":code" element={<ProjectInvite/>} />
+                          <Route path=":code" element={<ProjectInvite />} />
                         </Route>
 
                         <Route path="works" element={<Works />} />
-                        <Route path="community" element={<Community/>} />
-                        <Route path="chats" element={<Chats/>} />
+                        <Route path="community" element={<Community />} />
+                        <Route path="chats" element={<Chats />} />
                         <Route path="*" element={<div>Not Found</div>} />
                       </Route>
                     </Routes>
@@ -118,10 +121,10 @@ function App() {
                   <Route index element={
                     <Home />} />
                   <Route path="team/invite">
-                    <Route path=":code" element={<TeamInvite/>} />
+                    <Route path=":code" element={<TeamInvite />} />
                   </Route>
                   <Route path="projects/invite">
-                    <Route path=":code" element={<ProjectInvite/>} />
+                    <Route path=":code" element={<ProjectInvite />} />
                   </Route>
                 </Route>
               </Routes>
