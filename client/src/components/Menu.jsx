@@ -66,12 +66,12 @@ const Flex = styled.div`
 `;
 
 const Logo = styled.div`
-  color: ${({ theme }) => theme.text};
+  color: ${({ theme }) => theme.primary};
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 16px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 26px;
 `;
 
 const Close = styled.div`
@@ -82,7 +82,7 @@ const Close = styled.div`
 `;
 
 const Image = styled.img`
-  height: 22px;
+  height: 32px;
 `;
 
 const Item = styled.div`
@@ -153,7 +153,7 @@ const Menu = ({ darkMode, setDarkMode, setMenuOpen, setNewTeam }) => {
   return (
     <Container setMenuOpen={setMenuOpen}>
       <Flex>
-        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit", alignItems: 'center',display: 'flex' }}>
           <Logo>
             <Image src={LogoIcon} />
             VEXA
